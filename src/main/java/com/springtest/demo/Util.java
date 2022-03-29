@@ -10,6 +10,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 import java.util.Random;
+import java.util.UUID;
 
 public class Util {
 
@@ -68,6 +69,11 @@ public class Util {
         message.setSubject(title);
 
         Transport.send(message);
+    }
+
+
+    public static String generateRandomFileName() {
+        return UUID.randomUUID().toString();
     }
 
 

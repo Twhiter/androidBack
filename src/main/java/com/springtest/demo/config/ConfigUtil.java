@@ -15,4 +15,5 @@ public class ConfigUtil {
     public static final String SMTP_HOST = "smtp.qq.com";
     public static final Integer SMTP_PORT = 587;
 
+
 }
