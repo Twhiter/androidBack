@@ -1,4 +1,4 @@
-package com.springtest.demo.controller;
+package com.springtest.demo.dto;
 
 
 import lombok.AllArgsConstructor;

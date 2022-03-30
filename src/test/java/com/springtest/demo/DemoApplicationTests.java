@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.nio.CharBuffer;
 
 
 @SpringBootTest
@@ -68,4 +72,27 @@ public class DemoApplicationTests {
 
 
     }
+
+
+    @Test
+    public void test4() throws IOException {
+
+        PipedWriter pipedWriter = new PipedWriter();
+        PipedReader pipedReader = new PipedReader();
+
+
+        pipedWriter.connect(pipedReader);
+
+
+        pipedWriter.write("It's Okay");
+
+
+        CharBuffer charBuffer = CharBuffer.allocate(64);
+        pipedReader.read(charBuffer);
+
+        System.out.println(charBuffer);
+    }
+
+
+
 }
