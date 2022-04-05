@@ -1,9 +1,11 @@
 package com.springtest.demo;
 
 
-import com.springtest.demo.dao.PhoneVerifyCodeDao;
+import com.springtest.demo.redisDao.PhoneVerifyCodeDao;
 import com.springtest.demo.dao.UserDao;
 import com.springtest.demo.entity.User;
+import com.springtest.demo.redisDao.TokenDao;
+import com.springtest.demo.redisEntity.Token;
 import com.springtest.demo.service.ServiceUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,4 +97,21 @@ public class DemoApplicationTests {
 
 
 
+    @Autowired
+    TokenDao tokenDao;
+
+    @Test
+    public void test5() {
+
+//        Token token = new Token();
+//        token.userId = 1;
+//        token.token = "123";
+//
+//        tokenDao.save(token);
+
+
+        tokenDao.findById(1).ifPresent(System.out::println);
+
+        tokenDao.findByToken("123").forEach(System.out::println);
+    }
 }

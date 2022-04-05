@@ -1,4 +1,4 @@
-package com.springtest.demo.dao;
+package com.springtest.demo.redisDao;
 
 
 import com.springtest.demo.redisEntity.PhoneVerifyCode;

@@ -1,14 +1,15 @@
 package com.springtest.demo.enums;
 
 import com.baomidou.mybatisplus.annotation.IEnum;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum State implements IEnum<String> {
 
-    FROZEN("frozen"),
-    Unverified("unverified"),
+    frozen("frozen"),
+    unverified("unverified"),
     normal("normal");
 
-
+    @JsonValue
     private String state;
 
     State(String val) {

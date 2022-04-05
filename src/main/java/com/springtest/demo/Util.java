@@ -8,6 +8,7 @@ import com.twilio.type.PhoneNumber;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
@@ -74,6 +75,10 @@ public class Util {
 
     public static String generateRandomFileName() {
         return UUID.randomUUID().toString();
+    }
+
+    public static String generateToken(String id) {
+        return UUID.randomUUID().toString() + UUID.nameUUIDFromBytes(id.getBytes(StandardCharsets.UTF_8)).toString();
     }
 
 

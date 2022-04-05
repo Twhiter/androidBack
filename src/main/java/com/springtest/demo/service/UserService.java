@@ -37,9 +37,9 @@ public class UserService {
              s.put("prompt",Prompt.user_fail_login);
         else
             s.put("prompt",switch (user.state) {
-            case FROZEN -> Prompt.user_account_frozen;
+            case frozen -> Prompt.user_account_frozen;
             case normal -> Prompt.use_successfully_login;
-            case Unverified -> Prompt.user_account_unverified;
+            case unverified -> Prompt.user_account_unverified;
         });
 
         return s;

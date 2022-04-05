@@ -2,6 +2,7 @@ package com.springtest.demo.controller;
 
 
 
+import com.springtest.demo.Util;
 import com.springtest.demo.config.StaticFileConfig;
 import com.springtest.demo.dto.LoginResp;
 import com.springtest.demo.dto.ResponseData;
@@ -102,10 +103,9 @@ public class UserController {
             User user = (User) userAndPrompt.get("user");
             Prompt prompt = (Prompt) userAndPrompt.get("prompt");
 
-            //todo token
             resp.data = new LoginResp();
             resp.data.prompt = prompt;
-            resp.data.token = null;
+            resp.data.token = Util.generateToken(user.userId.toString());
             resp.data.isOkay = (prompt.equals(Prompt.use_successfully_login));
 
             return resp;
