@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class Token {
 
     @Id
-    public Integer userId;
+    public String id;
 
     @Indexed
     public String token;

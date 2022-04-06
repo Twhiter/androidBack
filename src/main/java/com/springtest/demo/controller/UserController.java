@@ -12,6 +12,7 @@ import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.redisDao.TokenDao;
 import com.springtest.demo.redisEntity.Token;
 import com.springtest.demo.service.FileService;
+import com.springtest.demo.service.TokenService;
 import com.springtest.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,7 @@ public class UserController {
     FileService fileService;
 
     @Autowired
-    TokenDao tokenDao;
+    TokenService tokenService;
 
 
 
@@ -109,19 +110,23 @@ public class UserController {
             Prompt prompt = (Prompt) userAndPrompt.get("prompt");
 
 
-            //store token in redis
-            var tokenStr = Util.generateToken(user.userId.toString());
-            Token token = new Token();
-            token.setToken(tokenStr);
-            token.setUserId(user.userId);
-            tokenDao.save(token);
+           resp.data = new LoginResp();
+           resp.data.prompt = prompt;
+           resp.data.isOkay = (prompt.equals(Prompt.use_successfully_login));
 
-            resp.data = new LoginResp();
-            resp.data.prompt = prompt;
-            resp.data.token = Util.generateToken(user.userId.toString());
-            resp.data.isOkay = (prompt.equals(Prompt.use_successfully_login));
+           //if successful
+           if (prompt.equals(Prompt.use_successfully_login)) {
 
-            return resp;
+               String tokenStr = Util.generateToken("user:" + user.userId);
+               resp.data.token = tokenStr;
+
+               Token token = new Token();
+               token.id = user.userId.toString();
+               token.token = tokenStr;
+
+               tokenService.saveToken(token);
+           }
+           return resp;
         }catch (Exception e) {
 
             resp.status = ResponseData.ERROR;
@@ -129,7 +134,5 @@ public class UserController {
             return resp;
         }
     }
-
-
 
 }
