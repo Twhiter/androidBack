@@ -9,6 +9,8 @@ import com.springtest.demo.dto.ResponseData;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.FileType;
 import com.springtest.demo.enums.Prompt;
+import com.springtest.demo.redisDao.TokenDao;
+import com.springtest.demo.redisEntity.Token;
 import com.springtest.demo.service.FileService;
 import com.springtest.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class UserController {
 
     @Autowired
     FileService fileService;
+
+    @Autowired
+    TokenDao tokenDao;
 
 
 
@@ -102,6 +107,14 @@ public class UserController {
             var userAndPrompt = userService.login(phone,password);
             User user = (User) userAndPrompt.get("user");
             Prompt prompt = (Prompt) userAndPrompt.get("prompt");
+
+
+            //store token in redis
+            var tokenStr = Util.generateToken(user.userId.toString());
+            Token token = new Token();
+            token.setToken(tokenStr);
+            token.setUserId(user.userId);
+            tokenDao.save(token);
 
             resp.data = new LoginResp();
             resp.data.prompt = prompt;
