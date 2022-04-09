@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.springtest.demo.enums.State;
 import lombok.Data;
 
@@ -21,7 +22,6 @@ public class User implements Serializable {
     @TableId(type = IdType.AUTO)
     public Integer userId;
 
-
     public String phoneNumber;
 
 
@@ -30,14 +30,15 @@ public class User implements Serializable {
 
     public String lastName;
 
-    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public String passportNumber;
 
 
     public String country;
 
-
     public String email;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public String passportPhoto;
 
 
@@ -51,5 +52,13 @@ public class User implements Serializable {
     public BigDecimal moneyAmount;
     public BigDecimal frozenMoney;
     public String avatar;
+
+
+    public void secureSet() {
+        this.passportNumber = null;
+        this.passportPhoto = null;
+    }
+
+
 
 }

@@ -44,4 +44,18 @@ public class UserService {
 
         return s;
     }
+
+    private User getUser(int id) {
+        return userDao.selectById(id);
+    }
+
+    public User getUserByAdmin(int id) {
+        return getUser(id);
+    }
+
+    public User getUserByUser(int id) {
+        User user = getUser(id);
+        user.secureSet();
+        return user;
+    }
 }

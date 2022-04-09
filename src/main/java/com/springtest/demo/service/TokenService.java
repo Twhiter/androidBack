@@ -25,12 +25,9 @@ public class TokenService {
        var result = tokenDao.findByToken(token);
 
        if (result.size() == 1)
-           return result.get(0).id.toString();
+           return result.get(0).id;
        else
            return null;
    }
-
-
-
 
 }

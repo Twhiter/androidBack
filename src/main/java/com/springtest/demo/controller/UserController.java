@@ -1,7 +1,6 @@
 package com.springtest.demo.controller;
 
 
-
 import com.springtest.demo.Util;
 import com.springtest.demo.config.StaticFileConfig;
 import com.springtest.demo.dto.LoginResp;
@@ -9,17 +8,16 @@ import com.springtest.demo.dto.ResponseData;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.FileType;
 import com.springtest.demo.enums.Prompt;
-import com.springtest.demo.redisDao.TokenDao;
 import com.springtest.demo.redisEntity.Token;
 import com.springtest.demo.service.FileService;
 import com.springtest.demo.service.TokenService;
 import com.springtest.demo.service.UserService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.File;
 import java.io.IOException;
@@ -135,4 +133,27 @@ public class UserController {
         }
     }
 
+    @GetMapping("/api/user/{userid}")
+    public ResponseData<User> getUserInfo(@PathVariable(name = "userid") int id) {
+
+        ResponseData<User> resp = new ResponseData<>();
+        resp.status = ResponseData.OK;
+
+        try {
+            resp.data = userService.getUserByUser(id);
+        }catch (Exception e) {
+            resp.status = ResponseData.ERROR;
+            resp.errorPrompt = "Error";
+        }
+        return resp;
+    }
+
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", paramType = "header"),
+    })
+    @GetMapping("/api/user/self")
+    public ResponseData<User> getUser(@ApiIgnore  @RequestAttribute("userId") int userId) {
+        return getUserInfo(userId);
+    }
 }
