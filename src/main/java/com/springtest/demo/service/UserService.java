@@ -2,6 +2,7 @@ package com.springtest.demo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.springtest.demo.dao.UserDao;
+import com.springtest.demo.dto.OverviewInfo;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,4 +59,13 @@ public class UserService {
         user.secureSet();
         return user;
     }
+
+
+    public OverviewInfo getUserOverview(int id) {
+        User user = getUser(id);
+        return new OverviewInfo(user.avatar,String.format("%s %s",user.firstName,user.lastName),user.phoneNumber);
+    }
+
+
+
 }

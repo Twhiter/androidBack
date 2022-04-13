@@ -1,4 +1,4 @@
-package com.springtest.demo;
+package com.springtest.demo.util;
 
 import com.springtest.demo.config.ConfigUtil;
 import com.twilio.Twilio;
@@ -80,9 +80,6 @@ public class Util {
     public static String generateToken(String id) {
         return UUID.randomUUID().toString() + UUID.nameUUIDFromBytes(id.getBytes(StandardCharsets.UTF_8)).toString();
     }
-
-
-
 
 
 }

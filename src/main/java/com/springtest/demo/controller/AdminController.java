@@ -1,6 +1,6 @@
 package com.springtest.demo.controller;
 
-import com.springtest.demo.Util;
+import com.springtest.demo.util.Util;
 import com.springtest.demo.dto.LoginResp;
 import com.springtest.demo.dto.ResponseData;
 import com.springtest.demo.entity.Admin;

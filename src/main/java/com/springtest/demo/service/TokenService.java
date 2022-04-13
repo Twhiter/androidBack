@@ -1,6 +1,5 @@
 package com.springtest.demo.service;
 
-import com.springtest.demo.Util;
 import com.springtest.demo.redisDao.TokenDao;
 import com.springtest.demo.redisEntity.Token;
 import org.springframework.beans.factory.annotation.Autowired;

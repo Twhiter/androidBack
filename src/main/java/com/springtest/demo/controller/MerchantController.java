@@ -1,6 +1,7 @@
 package com.springtest.demo.controller;
 
 
+import com.springtest.demo.dto.OverviewInfo;
 import com.springtest.demo.dto.ResponseData;
 import com.springtest.demo.entity.Merchant;
 import com.springtest.demo.service.MerchantService;
@@ -47,7 +48,6 @@ public class MerchantController {
         return resp;
     }
 
-
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", paramType = "header"),
     })
@@ -55,4 +55,23 @@ public class MerchantController {
     public ResponseData<Merchant> getMerchant(@ApiIgnore @RequestAttribute("userId") int userId) {
         return getMerchantByUserId(userId);
     }
+
+
+    @GetMapping("/api/merchant/overview/{merchantId}")
+    public ResponseData<OverviewInfo> getMerchantOverview(@PathVariable int merchantId) {
+
+        ResponseData<OverviewInfo> resp = new ResponseData<>();
+        resp.status = ResponseData.OK;
+
+        try {
+            resp.data = merchantService.getMerchantOverview(merchantId);
+        }catch (Exception e) {
+            resp.status = ResponseData.ERROR;
+            resp.errorPrompt = "Error";
+        }
+        return resp;
+    }
+
+
+
 }

@@ -1,9 +1,10 @@
 package com.springtest.demo.controller;
 
 
-import com.springtest.demo.Util;
+import com.springtest.demo.util.Util;
 import com.springtest.demo.config.StaticFileConfig;
 import com.springtest.demo.dto.LoginResp;
+import com.springtest.demo.dto.OverviewInfo;
 import com.springtest.demo.dto.ResponseData;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.FileType;
@@ -155,5 +156,20 @@ public class UserController {
     @GetMapping("/api/user/self")
     public ResponseData<User> getUser(@ApiIgnore  @RequestAttribute("userId") int userId) {
         return getUserInfo(userId);
+    }
+
+
+    @GetMapping("/api/user/overview/{userId}")
+    public ResponseData<OverviewInfo> getUserOverview(@PathVariable int userId) {
+        ResponseData<OverviewInfo> resp = new ResponseData<>();
+        resp.status = ResponseData.OK;
+
+        try {
+            resp.data = userService.getUserOverview(userId);
+        }catch (Exception e) {
+            resp.status = ResponseData.ERROR;
+            resp.errorPrompt = "Error";
+        }
+        return resp;
     }
 }

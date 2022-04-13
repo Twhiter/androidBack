@@ -2,7 +2,7 @@ spring:
   datasource:
     username: twhiter
     password: TWhiter
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:1234/mobile_pay
 
   mvc:

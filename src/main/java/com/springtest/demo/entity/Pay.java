@@ -21,25 +21,10 @@ public class Pay implements Serializable {
 
     @TableId(type = IdType.AUTO)
     public Integer payId;
-
-
     public Integer sourceUserId;
-
-
     public Integer targetMerchantId;
-
-
     public Date time;
-
-
     public PayState state;
-
-
     public BigDecimal amount;
-
-
     public BigDecimal fee;
-
-    @TableField(exist = false)
-    public static final long serialVersionUID = 1L;
 }

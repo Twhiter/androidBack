@@ -1,7 +1,7 @@
 package com.springtest.demo.service;
 
 
-import com.springtest.demo.Util;
+import com.springtest.demo.util.Util;
 import com.springtest.demo.redisDao.EmailVerifyCodeDao;
 import com.springtest.demo.redisDao.PhoneVerifyCodeDao;
 import com.springtest.demo.redisEntity.EmailVerifyCode;

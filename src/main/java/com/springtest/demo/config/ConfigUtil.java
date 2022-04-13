@@ -1,5 +1,7 @@
 package com.springtest.demo.config;
 
+import java.math.BigDecimal;
+
 public class ConfigUtil {
 
 
@@ -14,6 +16,9 @@ public class ConfigUtil {
     public static final String PASSWORD = "bjuvzmtmzcvkdhid";
     public static final String SMTP_HOST = "smtp.qq.com";
     public static final Integer SMTP_PORT = 587;
+
+
+    public static final BigDecimal FEE_RATE = BigDecimal.valueOf(0.01);
 
 
 }

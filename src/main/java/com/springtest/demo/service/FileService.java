@@ -1,7 +1,7 @@
 package com.springtest.demo.service;
 
 
-import com.springtest.demo.Util;
+import com.springtest.demo.util.Util;
 import com.springtest.demo.config.StaticFileConfig;
 
 import org.springframework.stereotype.Service;
@@ -19,9 +19,8 @@ public class FileService {
 
 
         int idx = file.getOriginalFilename().lastIndexOf(".");
-        if (idx == -1)
-            idx = 0;
-        String fileExtension = file.getOriginalFilename().substring(idx);
+
+        String fileExtension = file.getOriginalFilename().substring(idx + 1);
 
         String newFileName = Util.generateRandomFileName() + "_" + fileExtension;
 
@@ -31,11 +30,7 @@ public class FileService {
         File newFile = new File(filePath);
         file.transferTo(newFile);
 
-
         return newFile;
     }
-
-
-
 
 }
