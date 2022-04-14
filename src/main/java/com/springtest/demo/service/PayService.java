@@ -33,26 +33,24 @@ public class PayService {
     @Autowired
     TransactionHandler transactionHandler;
 
-    public Prompt pay(int userId, int merchantId, BigDecimal amount) {
+    public Object[] pay(int userId, int merchantId, BigDecimal amount) {
 
         Prompt prompt = Prompt.pay_success;
-        Prompt[] returnedPrompt = new Prompt[]{prompt};
+        Prompt[] returns = new Prompt[]{prompt};
+        Pay pay = null;
 
         try {
-            transactionHandler.runInTransactionSerially(() -> {
-                _pay(userId,merchantId,amount,returnedPrompt);
-                return null;
-            });
+            pay = transactionHandler.runInTransactionSerially(() -> _pay(userId,merchantId,amount,returns));
         }catch (Exception e) {
             e.printStackTrace();
         }
 
-        prompt = returnedPrompt[0];
+        prompt = returns[0];
 
-        return prompt;
+        return new Object[]{prompt,pay};
     }
 
-    private void _pay(int userId, int merchantId, BigDecimal amount, Prompt[] returnedPrompt) {
+    private Pay _pay(int userId, int merchantId, BigDecimal amount, Prompt[] returnedPrompt) {
         User user = userDao.selectById(userId);
         Merchant merchant = merchantDao.selectById(merchantId);
 
@@ -94,5 +92,7 @@ public class PayService {
         merchantDao.updateById(merchant);
 
         returnedPrompt[0] = Prompt.pay_success;
+
+        return payDao.selectById(pay.payId);
     }
 }

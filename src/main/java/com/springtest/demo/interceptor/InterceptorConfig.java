@@ -10,12 +10,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig  implements WebMvcConfigurer {
 
     @Autowired
-    UserGetSelfInfoInterceptor userGetSelfInfoInterceptor;
+    GetUserIdFromTokenInterceptor getUserIdFromTokenInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(userGetSelfInfoInterceptor)
+        registry.addInterceptor(getUserIdFromTokenInterceptor)
                 .addPathPatterns("/api/user/self")
-                .addPathPatterns("/api/merchant/self");
+                .addPathPatterns("/api/merchant/self")
+                .addPathPatterns("/api/pay");
     }
 }

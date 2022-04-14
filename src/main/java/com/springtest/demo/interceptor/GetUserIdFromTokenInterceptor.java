@@ -1,6 +1,5 @@
 package com.springtest.demo.interceptor;
 
-import com.springtest.demo.redisDao.TokenDao;
 import com.springtest.demo.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class UserGetSelfInfoInterceptor implements HandlerInterceptor {
+public class GetUserIdFromTokenInterceptor implements HandlerInterceptor {
 
 
     @Autowired
