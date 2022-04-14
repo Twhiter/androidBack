@@ -35,17 +35,17 @@ public class PayService {
 
     public Object[] pay(int userId, int merchantId, BigDecimal amount) {
 
-        Prompt prompt = Prompt.pay_success;
-        Prompt[] returns = new Prompt[]{prompt};
+        Prompt prompt = Prompt.pay_error;
+        Prompt[] returnedPrompt = new Prompt[]{prompt};
         Pay pay = null;
 
         try {
-            pay = transactionHandler.runInTransactionSerially(() -> _pay(userId,merchantId,amount,returns));
+            pay = transactionHandler.runInTransactionSerially(() -> _pay(userId,merchantId,amount,returnedPrompt));
         }catch (Exception e) {
             e.printStackTrace();
         }
 
-        prompt = returns[0];
+        prompt = returnedPrompt[0];
 
         return new Object[]{prompt,pay};
     }
@@ -60,6 +60,7 @@ public class PayService {
         returnedPrompt[0] = logicChain.process(
                 () -> user == null ? Prompt.pay_user_not_found_error : null,
                 () ->  merchant == null ? Prompt.pay_merchant_not_found_error : null,
+                () -> amount.compareTo(BigDecimal.ZERO) <= 0?Prompt.pay_amount_invalid_error:null,
                 () -> user.state == State.frozen?Prompt.pay_user_account_frozen:null,
                 () -> user.state == State.unverified?Prompt.pay_user_account_unverified:null,
                 () -> user.userId.equals(merchant.merchantUserId)?Prompt.pay_user_to_self_error:null,

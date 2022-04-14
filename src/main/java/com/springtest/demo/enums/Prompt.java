@@ -29,11 +29,31 @@ public enum Prompt {
     pay_user_account_unverified("user account is unverified"),
 
     pay_merchant_account_frozen("merchant account is frozen"),
-    pay_merchant_account_unverified("merchant account is unverified");
+    pay_merchant_account_unverified("merchant account is unverified"),
+    pay_amount_invalid_error("amount must be larger than 0"),
+
+
+
+    transfer_source_not_exist("Transfer source account does not exist"),
+    transfer_target_not_exist("Transfer target account does not exist"),
+
+    transfer_source_account_frozen("Your account is frozen"),
+    transfer_target_account_frozen("Target account is frozen"),
+
+    transfer_source_account_unverified("Your account is unverified"),
+    transfer_target_account_unverified("Target account is unverified"),
+
+    transfer_to_self_error("Can't transfer to yourself"),
+
+    transfer_not_enough_balance("Not enough balance"),
+    transfer_error("Error during transfer"),
+    transfer_amount_invalid_error("amount must be larger than 0"),
+    transfer_success("");
+
 
 
     @JsonValue
-     String prompt;
+    public String prompt;
 
     Prompt(String s) {
         prompt = s;

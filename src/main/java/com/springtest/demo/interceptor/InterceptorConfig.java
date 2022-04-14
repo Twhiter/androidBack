@@ -17,6 +17,7 @@ public class InterceptorConfig  implements WebMvcConfigurer {
         registry.addInterceptor(getUserIdFromTokenInterceptor)
                 .addPathPatterns("/api/user/self")
                 .addPathPatterns("/api/merchant/self")
-                .addPathPatterns("/api/pay");
+                .addPathPatterns("/api/pay")
+                .addPathPatterns("/api/transfer");
     }
 }
