@@ -33,14 +33,15 @@ public class PayService {
     @Autowired
     TransactionHandler transactionHandler;
 
-    public Object[] pay(int userId, int merchantId, BigDecimal amount) {
+    public Object[] pay(int userId, int merchantId, BigDecimal amount,String paymentPassword,String remarks) {
 
         Prompt prompt = Prompt.pay_error;
         Prompt[] returnedPrompt = new Prompt[]{prompt};
         Pay pay = null;
 
         try {
-            pay = transactionHandler.runInTransactionSerially(() -> _pay(userId,merchantId,amount,returnedPrompt));
+            pay = transactionHandler.runInTransactionSerially(() -> _pay(userId,merchantId,amount,paymentPassword,remarks,
+                    returnedPrompt));
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,7 +51,8 @@ public class PayService {
         return new Object[]{prompt,pay};
     }
 
-    private Pay _pay(int userId, int merchantId, BigDecimal amount, Prompt[] returnedPrompt) {
+    private Pay _pay(int userId, int merchantId, BigDecimal amount, String paymentPassword,String remarks,
+                     Prompt[] returnedPrompt) {
         User user = userDao.selectById(userId);
         Merchant merchant = merchantDao.selectById(merchantId);
 
@@ -60,6 +62,7 @@ public class PayService {
         returnedPrompt[0] = logicChain.process(
                 () -> user == null ? Prompt.pay_user_not_found_error : null,
                 () ->  merchant == null ? Prompt.pay_merchant_not_found_error : null,
+                () -> !user.paymentPassword.equals(paymentPassword)? Prompt.payment_password_not_correct:null,
                 () -> amount.compareTo(BigDecimal.ZERO) <= 0?Prompt.pay_amount_invalid_error:null,
                 () -> user.state == State.frozen?Prompt.pay_user_account_frozen:null,
                 () -> user.state == State.unverified?Prompt.pay_user_account_unverified:null,
@@ -85,6 +88,7 @@ public class PayService {
         pay.fee = amount.multiply(ConfigUtil.FEE_RATE).setScale(4,RoundingMode.HALF_UP);
         pay.sourceUserId = userId;
         pay.targetMerchantId = merchantId;
+        pay.remarks = remarks;
 
         payDao.insert(pay);
 

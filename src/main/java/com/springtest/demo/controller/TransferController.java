@@ -34,14 +34,16 @@ public class TransferController {
     @PostMapping("/api/transfer")
     public ResponseData<TransferResp> transfer(@ApiIgnore @RequestAttribute("userId") int sourceId,
                                                @RequestParam(name = "targetUserId") int targetUserId,
-                                               @RequestParam(name = "amount") BigDecimal amount) {
+                                               @RequestParam(name = "amount") BigDecimal amount,
+                                               @RequestParam(name = "paymentPassword") String paymentPassword,
+                                               @RequestParam(name = "remarks") String remarks) {
 
         amount = amount.setScale(4, RoundingMode.HALF_UP);
         ResponseData<TransferResp> responseData = new ResponseData<>();
         responseData.data = new TransferResp();
 
         try{
-            var promptAndTransfer = transferService.transfer(sourceId, targetUserId, amount);
+            var promptAndTransfer = transferService.transfer(sourceId, targetUserId, amount,paymentPassword,remarks);
             responseData.data.prompt = (Prompt) promptAndTransfer[0];
             responseData.data.transfer = (Transfer) promptAndTransfer[1];
         }catch (Exception e) {
@@ -51,12 +53,4 @@ public class TransferController {
         }
         return responseData;
     }
-
-
-
-
-
-
-
-
 }

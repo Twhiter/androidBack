@@ -63,9 +63,12 @@ public class UserService {
 
     public OverviewInfo getUserOverview(int id) {
         User user = getUser(id);
-        return new OverviewInfo(user.avatar,String.format("%s %s",user.firstName,user.lastName),user.phoneNumber);
+        return OverviewInfo.fromUser(user);
     }
 
 
+    public boolean verifyPaymentPassword(String password,int userId) {
+        return userDao.selectById(userId).paymentPassword.equals(password);
+    }
 
 }

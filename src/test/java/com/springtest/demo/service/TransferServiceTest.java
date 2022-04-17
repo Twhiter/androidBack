@@ -20,7 +20,7 @@ class TransferServiceTest {
     void transfer() {
 
 
-        System.out.println(Arrays.toString(transferService.transfer(13, 12, BigDecimal.ONE)));
+//        System.out.println(Arrays.toString(transferService.transfer(13, 12, BigDecimal.ONE)));
 
 
     }

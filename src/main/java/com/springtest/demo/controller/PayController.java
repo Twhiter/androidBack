@@ -35,7 +35,10 @@ public class PayController {
     @PostMapping("/api/pay")
     public ResponseData<PayResp> pay(@ApiIgnore @RequestAttribute("userId") int userId,
                                      @RequestParam(name = "merchantId") int merchantId,
-                                     @RequestParam(name = "amount")BigDecimal amount) {
+                                     @RequestParam(name = "amount")BigDecimal amount,
+                                     @RequestParam(name = "paymentPassword")String paymentPassword,
+                                     @RequestParam(name = "remarks")String remarks
+                                     ) {
 
         amount = amount.setScale(4, RoundingMode.HALF_UP);
         ResponseData<PayResp> responseData = new ResponseData<>();
@@ -43,7 +46,7 @@ public class PayController {
 
 
         try{
-            var promptAndPay = payService.pay(userId, merchantId, amount);
+            var promptAndPay = payService.pay(userId, merchantId, amount,paymentPassword,remarks);
             responseData.data.prompt = (Prompt) promptAndPay[0];
             responseData.data.payOverview = PayOverview.fromPay((Pay) promptAndPay[1]);
         }catch (Exception e) {

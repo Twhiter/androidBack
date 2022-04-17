@@ -28,7 +28,7 @@ public class MerchantService {
     public OverviewInfo getMerchantOverview(int id) {
 
         Merchant merchant = getMerchantById(id);
-        return new OverviewInfo(merchant.merchantLogo,merchant.merchantName,merchant.merchantPhoneNumber);
+        return OverviewInfo.fromMerchant(merchant);
     }
 
 

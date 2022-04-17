@@ -17,6 +17,7 @@ public class PayOverview {
     public BigDecimal amount;
     public Date time;
     public PayState state;
+    public String remarks;
 
 
 
@@ -30,6 +31,7 @@ public class PayOverview {
         payOverview.amount = pay.amount;
         payOverview.time = pay.time;
         payOverview.state = pay.state;
+        payOverview.remarks = pay.remarks;
 
         return payOverview;
     }

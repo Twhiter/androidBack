@@ -28,7 +28,7 @@ public class TransferService {
     @Autowired
     TransactionHandler transactionHandler;
 
-    public Object[] transfer(int sourceUserId, int targetUserId, BigDecimal amount) {
+    public Object[] transfer(int sourceUserId, int targetUserId, BigDecimal amount,String paymentPassword,String remarks) {
 
         Prompt prompt = Prompt.transfer_error;
         Prompt[] returnedPrompt = new Prompt[]{prompt};
@@ -37,7 +37,7 @@ public class TransferService {
 
         try{
             transfer = transactionHandler.runInTransactionSerially(
-                    () -> _transfer(sourceUserId,targetUserId,amount,returnedPrompt));
+                    () -> _transfer(sourceUserId,targetUserId,amount,paymentPassword,remarks,returnedPrompt));
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,7 +47,9 @@ public class TransferService {
     }
 
 
-    private Transfer _transfer(int sourceUserId,int targetUserId,BigDecimal amount,Prompt[] returnedPrompt) {
+    private Transfer _transfer(int sourceUserId,int targetUserId,BigDecimal amount,String paymentPassword,
+                               String remarks,
+                               Prompt[] returnedPrompt) {
 
 
         User sourceUser = userDao.selectById(sourceUserId);
@@ -58,6 +60,7 @@ public class TransferService {
         returnedPrompt[0] = logicChain.process(
                 () -> sourceUser == null? Prompt.transfer_source_not_exist:null,
                 () -> targetUser == null? Prompt.transfer_target_not_exist:null,
+                () -> !sourceUser.paymentPassword.equals(paymentPassword)?Prompt.payment_password_not_correct:null,
                 () -> sourceUserId == targetUserId?Prompt.transfer_to_self_error:null,
                 () -> amount.compareTo(BigDecimal.ZERO) <= 0?Prompt.transfer_amount_invalid_error:null,
                 () -> sourceUser.state == State.frozen?Prompt.transfer_source_account_frozen:null,
@@ -83,6 +86,7 @@ public class TransferService {
         //generate a new transfer
         Transfer transfer = new Transfer();
         transfer.amount = amount;
+        transfer.remarks = remarks;
         transfer.sourceUserId = sourceUserId;
         transfer.targetUserId = targetUserId;
 

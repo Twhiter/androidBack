@@ -21,7 +21,7 @@ class PayServiceTest {
     @Test
     void pay() {
 
-        System.out.println(Arrays.toString(payService.pay(13, 1, BigDecimal.ONE)));
+//        System.out.println(Arrays.toString(payService.pay(13, 1, BigDecimal.ONE)));
     }
 
     @Test

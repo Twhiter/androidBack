@@ -19,16 +19,9 @@ public class Transfer implements Serializable {
 
     @TableId(type = IdType.AUTO)
     public Integer transferId;
-
-
     public Integer sourceUserId;
-
-
     public Integer targetUserId;
-
-
     public Date time;
-
-
     public BigDecimal amount;
+    public String remarks;
 }

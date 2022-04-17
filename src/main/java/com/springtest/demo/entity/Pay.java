@@ -27,4 +27,5 @@ public class Pay implements Serializable {
     public PayState state;
     public BigDecimal amount;
     public BigDecimal fee;
+    public String remarks;
 }

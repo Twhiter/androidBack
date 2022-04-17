@@ -17,7 +17,7 @@ class PayControllerTest {
     @Test
     void pay() {
 
-        System.out.println(payController.pay(13, 1, BigDecimal.ONE));
+//        System.out.println(payController.pay(13, 1, BigDecimal.ONE));
 
 
     }

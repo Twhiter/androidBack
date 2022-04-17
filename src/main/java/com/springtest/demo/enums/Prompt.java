@@ -48,7 +48,11 @@ public enum Prompt {
     transfer_not_enough_balance("Not enough balance"),
     transfer_error("Error during transfer"),
     transfer_amount_invalid_error("amount must be larger than 0"),
-    transfer_success("");
+    transfer_success(""),
+
+
+
+    payment_password_not_correct("payment password not correct");
 
 
 
