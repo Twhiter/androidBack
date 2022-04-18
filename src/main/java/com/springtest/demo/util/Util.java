@@ -15,6 +15,8 @@ import java.util.UUID;
 
 public class Util {
 
+    public static final String EMAIL_PATTERN= "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+
 
     //generate random codes
     public static String generateRandomCode(int length) {
@@ -79,6 +81,30 @@ public class Util {
 
     public static String generateToken(String id) {
         return UUID.randomUUID().toString() + UUID.nameUUIDFromBytes(id.getBytes(StandardCharsets.UTF_8)).toString();
+    }
+
+
+    //encode email into format like ***asd@aa.com
+    public static String encodeEmail(String email) {
+
+        int idx = email.lastIndexOf("@");
+        String encoded;
+
+        String partBeforeAlpha = email.substring(0,idx);
+        if (partBeforeAlpha.length() > 3)
+            encoded = partBeforeAlpha.substring(0,partBeforeAlpha.length() - 3) + "***";
+        else
+            encoded = partBeforeAlpha.replaceAll(".","*");
+
+        return encoded + email.substring(idx);
+    }
+
+
+    public static String encodePhone(String phone) {
+
+
+        int idx = phone.length() - 4;
+        return phone.substring(0,idx) + "****";
     }
 
 

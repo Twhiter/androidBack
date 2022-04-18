@@ -22,6 +22,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -171,5 +172,24 @@ public class UserController {
             resp.errorPrompt = "Error";
         }
         return resp;
+    }
+
+
+    @GetMapping("/api/user/search")
+    public ResponseData<List<OverviewInfo>> searchUsers(@RequestParam("keyword") String keyword,
+                                                        @RequestParam("page") int page,
+                                                        @RequestParam("pageCount")int pageCount) {
+
+        ResponseData<List<OverviewInfo>> resp = new ResponseData<>();
+        resp.status = ResponseData.OK;
+
+        try {
+            resp.data = userService.searchUser(keyword,page,pageCount);
+        }catch (Exception e) {
+            resp.status = ResponseData.ERROR;
+            resp.errorPrompt = "Error";
+        }
+        return resp;
+
     }
 }

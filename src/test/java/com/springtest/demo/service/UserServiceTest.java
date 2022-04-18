@@ -32,4 +32,24 @@ class UserServiceTest {
     void getUserOverview() {
         System.out.println(userService.getUserOverview(12));
     }
+
+
+    @Test
+    void getUserOverviewInfoByNameRoughly() {
+
+
+        System.out.println(userService.getUserOverviewInfoByNameRoughly("tu",1,0));
+
+
+    }
+
+
+    @Test
+    void searchUser() {
+
+
+        System.out.println(userService.searchUser("u", 1, 10));
+
+
+    }
 }
