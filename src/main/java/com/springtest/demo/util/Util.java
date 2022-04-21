@@ -15,8 +15,6 @@ import java.util.UUID;
 
 public class Util {
 
-    public static final String EMAIL_PATTERN= "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
-
 
     //generate random codes
     public static String generateRandomCode(int length) {

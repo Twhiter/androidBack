@@ -3,9 +3,11 @@ package com.springtest.demo.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.springtest.demo.dao.UserDao;
 import com.springtest.demo.dto.OverviewInfo;
+import com.springtest.demo.dto.Page;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.util.Util;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,22 +76,45 @@ public class UserService {
         return user == null ? null : OverviewInfo.fromUser(user);
     }
 
-    public List<OverviewInfo> getUserOverviewInfosByEmail(String email) {
+    public Page<OverviewInfo> getUserOverviewInfosByEmail(String email,int currentPage,int pageSize) {
 
-        List<User> users = userDao.selectList(new QueryWrapper<User>().eq("email",email));
-        return users.stream().map(OverviewInfo::fromUser).toList();
+        List<User> users = userDao.selectList(new QueryWrapper<User>()
+                .eq("email",email)
+                .last(String.format("limit %d,%d",(currentPage - 1) * pageSize,pageSize))
+        );
+
+        int count = Math.toIntExact(userDao.selectCount(new QueryWrapper<User>().eq("email",email)));
+
+        int maxPage = (int) Math.ceil(1.0 * count / pageSize);
+        var data =  users.stream().map(OverviewInfo::fromUser).toList();
+
+        return new Page<>(currentPage,maxPage,pageSize,data);
     }
 
 
-    public List<OverviewInfo> getUserOverviewInfoByNameRoughly(String roughName,int page,int count) {
+    public Page<OverviewInfo> getUserOverviewInfoByNameRoughly(String roughName, int page, int pageSize) {
 
         List<User>users = userDao.selectList(new QueryWrapper<User>()
                 .apply("concat(lower(first_name),' ',lower(last_name)) like {0}"
                         ,"%" + roughName.toLowerCase() + "%")
-                .last(String.format("limit %d,%d",(page - 1) * count,count))
+                .last(String.format("limit %d,%d",(page - 1) * pageSize,pageSize))
         );
 
-        return users.stream().map(OverviewInfo::fromUser).toList();
+        int count = Math.toIntExact(userDao.selectCount(new QueryWrapper<User>()
+                .apply("concat(lower(first_name),' ',lower(last_name)) like {0}"
+                        , "%" + roughName.toLowerCase() + "%")));
+
+        int maxPage = (int) Math.ceil(1.0 * count / pageSize);
+
+        var data =  users.stream().map(OverviewInfo::fromUser).toList();
+
+        Page<OverviewInfo> pageObj = new Page<>();
+        pageObj.maxPage = maxPage;
+        pageObj.pageSize = pageSize;
+        pageObj.currentPage = page;
+        pageObj.data = data;
+
+        return pageObj;
     }
 
 
@@ -99,40 +124,48 @@ public class UserService {
         return overviewInfo;
     }
 
-    public List<OverviewInfo> getUserOverviewInfosByEmailEncoded(String email) {
+    public Page<OverviewInfo> getUserOverviewInfosByEmailEncoded(String email,int currentPage,int pageSize) {
 
-        var overviewInfos = getUserOverviewInfosByEmail(email);
-        return overviewInfos.stream()
+        var page = getUserOverviewInfosByEmail(email,currentPage,pageSize);
+         page.data = page.data.stream()
                 .peek(overviewInfo -> overviewInfo.phoneNumber = Util.encodePhone(overviewInfo.phoneNumber))
                 .toList();
+         return page;
     }
 
 
-    public List<OverviewInfo> getUserOverviewInfoByNameRoughlyEncoded(String roughName,int page,int count) {
-        var overviewInfos = getUserOverviewInfoByNameRoughly(roughName,page,count);
+    public Page<OverviewInfo> getUserOverviewInfoByNameRoughlyEncoded(String roughName,int page,int count) {
 
-        return overviewInfos.stream()
+        var pageObj = getUserOverviewInfoByNameRoughly(roughName,page,count);
+
+        pageObj.data = pageObj.data.stream()
                 .peek(overviewInfo -> {
                     overviewInfo.phoneNumber = Util.encodePhone(overviewInfo.phoneNumber);
                     overviewInfo.email = Util.encodeEmail(overviewInfo.email);
                 })
                 .toList();
+
+        return pageObj;
     }
 
 
-    public List<OverviewInfo> searchUser(String keyword,int page,int count) {
+    public Page<OverviewInfo> searchUser(String keyword,int page,int count) {
 
-        List<OverviewInfo> infos = new ArrayList<>();
+        Page<OverviewInfo> pageObj = new Page<>();
+        pageObj.data = new ArrayList<>();
+        pageObj.currentPage = page;
+        pageObj.maxPage = 1;
+        pageObj.pageSize = count;
 
-        if (keyword.matches(Util.EMAIL_PATTERN)) {
-            infos = getUserOverviewInfosByEmailEncoded(keyword.toLowerCase());
+        if (EmailValidator.getInstance().isValid(keyword)) {
+            pageObj = getUserOverviewInfosByEmailEncoded(keyword.toLowerCase(),page,count);
         }else if (keyword.matches("\\+\\d+")) {
             var info = this.getUserOverviewInfoByPhoneEncoded(keyword.toLowerCase());
             if (info != null)
-                infos.add(info);
+                pageObj.data.add(info);
         }else
-            infos = getUserOverviewInfoByNameRoughlyEncoded(keyword.toLowerCase(),page,count);
-        return infos;
+            pageObj = getUserOverviewInfoByNameRoughlyEncoded(keyword.toLowerCase(),page,count);
+        return pageObj;
     }
 
 }

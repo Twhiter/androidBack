@@ -1,6 +1,7 @@
 package com.springtest.demo.controller;
 
 
+import com.springtest.demo.dto.Page;
 import com.springtest.demo.util.Util;
 import com.springtest.demo.config.StaticFileConfig;
 import com.springtest.demo.dto.LoginResp;
@@ -176,11 +177,11 @@ public class UserController {
 
 
     @GetMapping("/api/user/search")
-    public ResponseData<List<OverviewInfo>> searchUsers(@RequestParam("keyword") String keyword,
-                                                        @RequestParam("page") int page,
-                                                        @RequestParam("pageCount")int pageCount) {
+    public ResponseData<Page<OverviewInfo>> searchUsers(@RequestParam("keyword") String keyword,
+                                          @RequestParam("page") int page,
+                                          @RequestParam("pageCount")int pageCount) {
 
-        ResponseData<List<OverviewInfo>> resp = new ResponseData<>();
+        ResponseData<Page<OverviewInfo>> resp = new ResponseData<>();
         resp.status = ResponseData.OK;
 
         try {
