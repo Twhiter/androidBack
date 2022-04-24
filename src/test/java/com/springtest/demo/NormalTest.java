@@ -11,7 +11,11 @@ import java.nio.CharBuffer;
 import java.nio.channels.Pipe;
 import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -62,7 +66,12 @@ public class NormalTest {
     @Test
     public void Test5() {
 
+        Date date = new Date();
+        String format = "MMM dd yyyy";
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd hh:mm",Locale.CANADA);
+
+        System.out.println(simpleDateFormat.format(date));
 
 
     }

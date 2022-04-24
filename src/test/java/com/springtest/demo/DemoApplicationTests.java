@@ -1,6 +1,8 @@
 package com.springtest.demo;
 
 
+import com.springtest.demo.dao.MerchantBillDao;
+import com.springtest.demo.dao.UserBillDao;
 import com.springtest.demo.redisDao.PhoneVerifyCodeDao;
 import com.springtest.demo.dao.UserDao;
 import com.springtest.demo.entity.User;
@@ -31,6 +33,12 @@ public class DemoApplicationTests {
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    UserBillDao userBillDao;
+
+    @Autowired
+    MerchantBillDao merchantBillDao;
 
 
     @Test
@@ -114,4 +122,17 @@ public class DemoApplicationTests {
 
         tokenDao.findByToken("123").forEach(System.out::println);
     }
+
+
+
+    @Test
+    public void test6() {
+
+        System.out.println(userBillDao.selectList(null));
+        System.out.println(merchantBillDao.selectList(null));
+
+    }
+
+
+
 }
