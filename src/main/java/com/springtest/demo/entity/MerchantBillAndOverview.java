@@ -10,11 +10,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * @TableName user_bills
+ * @TableName merchant_bills_and_overview
  */
-@TableName(value = "user_bills")
+@TableName(value = "merchant_bills_and_overview")
 @Data
-public class UserBill implements Serializable {
+public class MerchantBillAndOverview implements Serializable {
     public Integer recordId;
 
     public BillType action;
@@ -23,13 +23,24 @@ public class UserBill implements Serializable {
 
     public Date time;
 
-    public Integer userId;
+    public Integer merchantId;
 
-    public Integer targetId;
-
-    public UserType targetType;
+    public Date refundedTime;
 
     public String remarks;
 
-    public Date refundedTime;
+    public Integer id;
+
+    public UserType type;
+
+    public String avatar;
+
+    public String name;
+
+    public String phoneNumber;
+
+    /**
+     *
+     */
+    public String email;
 }

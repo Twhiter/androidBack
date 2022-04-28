@@ -3,21 +3,9 @@ package com.springtest.demo;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.channels.Pipe;
-import java.nio.channels.spi.SelectorProvider;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class NormalTest {
 
@@ -69,12 +57,16 @@ public class NormalTest {
         Date date = new Date();
         String format = "MMM dd yyyy";
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd hh:mm",Locale.CANADA);
+        //Sun Apr 17 12:00:00 GMT+03:00 2022
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE MMM dd hh:mm:");
 
         System.out.println(simpleDateFormat.format(date));
 
 
     }
+
+
+
 
 
 

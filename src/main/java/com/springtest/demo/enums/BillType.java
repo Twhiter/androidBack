@@ -8,11 +8,12 @@ public enum BillType implements IEnum<String> {
     transfer_in("Transfer In"),
     transfer_out("Transfer Out"),
     pay("Pay"),
-    pay_with_refunded("Pay(Refunded)"),
+    refunded_pay("Pay(Refunded)"),
     import_from_user("Import From Individual Account"),
     import_from_merchant("Import From Merchant Account"),
     export_to_user("Export To Individual Account"),
-    export_to_merchant("Export To Merchant Account");
+    export_to_merchant("Export To Merchant Account"),
+    ;
 
     @JsonValue
     private final String value;

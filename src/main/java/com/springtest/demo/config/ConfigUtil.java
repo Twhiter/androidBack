@@ -20,5 +20,10 @@ public class ConfigUtil {
 
     public static final BigDecimal FEE_RATE = BigDecimal.valueOf(0.01);
 
+    public static final String MAX_AMOUNT_STR = "1e+20";
+    public static final BigDecimal MAX_AMOUNT = new BigDecimal(MAX_AMOUNT_STR);
+
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXX";
+
 
 }

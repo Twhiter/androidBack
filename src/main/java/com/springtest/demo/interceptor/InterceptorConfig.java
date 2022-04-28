@@ -18,6 +18,7 @@ public class InterceptorConfig  implements WebMvcConfigurer {
                 .addPathPatterns("/api/user/self")
                 .addPathPatterns("/api/merchant/self")
                 .addPathPatterns("/api/pay")
-                .addPathPatterns("/api/transfer");
+                .addPathPatterns("/api/transfer")
+                .addPathPatterns("/api/bills/merchant", "/api/bills/user");
     }
 }
