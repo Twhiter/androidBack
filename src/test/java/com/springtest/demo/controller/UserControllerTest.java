@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.HashMap;
 
 @SpringBootTest
 class UserControllerTest {
@@ -18,6 +18,13 @@ class UserControllerTest {
 
     @Test
     void userLogin() {
+
+        var h = new HashMap<String, String>();
+        h.put("phone", "+8619917910891");
+        h.put("password", "123456");
+        System.out.println(userController.userLogin(h));
+
+
     }
 
     @Test

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Prompt {
 
 
+    unknownError("Unknown Error,Please try again"),
 
     user_account_unverified("Your account is not verified!"),
     user_account_frozen("Your account is frozen. This means you are restricted to do some operations"),
@@ -50,10 +51,11 @@ public enum Prompt {
     transfer_amount_invalid_error("amount must be larger than 0"),
     transfer_success(""),
 
+    payment_password_not_correct("payment password not correct"),
 
-
-    payment_password_not_correct("payment password not correct");
-
+    merchant_phoneNumber_already_exist("The company/organization phone already registered"),
+    merchant_license_number_already_exist("The compant/organization license number already registered"),
+    duplicate_register("You have already registered a merchant account!");
 
 
     @JsonValue
