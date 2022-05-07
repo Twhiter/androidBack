@@ -1,11 +1,10 @@
 package com.springtest.demo.controller;
 
 
-import com.springtest.demo.dto.Page;
-import com.springtest.demo.util.Util;
 import com.springtest.demo.config.StaticFileConfig;
 import com.springtest.demo.dto.LoginResp;
 import com.springtest.demo.dto.OverviewInfo;
+import com.springtest.demo.dto.Page;
 import com.springtest.demo.dto.ResponseData;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.FileType;
@@ -14,6 +13,7 @@ import com.springtest.demo.redisEntity.Token;
 import com.springtest.demo.service.FileService;
 import com.springtest.demo.service.TokenService;
 import com.springtest.demo.service.UserService;
+import com.springtest.demo.util.Util;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 @RestController

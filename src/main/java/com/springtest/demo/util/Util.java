@@ -104,6 +104,4 @@ public class Util {
         int idx = phone.length() - 4;
         return phone.substring(0,idx) + "****";
     }
-
-
 }
