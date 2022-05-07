@@ -19,9 +19,9 @@ public class AdminService {
 
     public Prompt login(Admin admin) {
 
-        return ! adminDao.exists(new QueryWrapper<Admin>()
-                .eq("admin_account",admin.adminAccount)
-                .eq("password",admin.password))
-                ? Prompt.admin_fail_login : Prompt.admin_successfully_login;
+        return !adminDao.exists(new QueryWrapper<Admin>()
+                .eq("admin_account", admin.adminAccount)
+                .eq("password", admin.password))
+                ? Prompt.admin_fail_login : Prompt.success;
     }
 }

@@ -112,20 +112,20 @@ public class UserController {
 
            resp.data = new LoginResp();
            resp.data.prompt = prompt;
-           resp.data.isOkay = (prompt.equals(Prompt.use_successfully_login));
+            resp.data.isOkay = (prompt.equals(Prompt.success));
 
            //if successful
-           if (prompt.equals(Prompt.use_successfully_login)) {
+            if (prompt.equals(Prompt.success)) {
 
-               String tokenStr = Util.generateToken("user:" + user.userId);
-               resp.data.token = tokenStr;
+                String tokenStr = Util.generateToken("user:" + user.userId);
+                resp.data.token = tokenStr;
 
-               Token token = new Token();
-               token.id = user.userId.toString();
-               token.token = tokenStr;
+                Token token = new Token();
+                token.id = user.userId.toString();
+                token.token = tokenStr;
 
-               tokenService.saveToken(token);
-           }
+                tokenService.saveToken(token);
+            }
            return resp;
         }catch (Exception e) {
 

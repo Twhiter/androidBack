@@ -6,14 +6,12 @@ import com.springtest.demo.entity.Transfer;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.enums.State;
-import com.springtest.demo.util.LambdaChainUnit;
 import com.springtest.demo.util.LambdaLogicChain;
 import com.springtest.demo.util.TransactionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @Service
 public class TransferService {
@@ -92,7 +90,7 @@ public class TransferService {
 
         transferDao.insert(transfer);
 
-        returnedPrompt[0] = Prompt.transfer_success;
+        returnedPrompt[0] = Prompt.success;
 
         return transferDao.selectById(transfer.transferId);
     }

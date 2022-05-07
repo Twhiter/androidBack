@@ -10,6 +10,7 @@ import com.springtest.demo.entity.Pay;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.enums.State;
+import com.springtest.demo.redisEntity.SessionPay;
 import com.springtest.demo.util.LambdaLogicChain;
 import com.springtest.demo.util.TransactionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class PayService {
@@ -96,8 +98,30 @@ public class PayService {
         merchant.moneyAmount = merchant.moneyAmount.add(amount.subtract(pay.fee));
         merchantDao.updateById(merchant);
 
-        returnedPrompt[0] = Prompt.pay_success;
+        returnedPrompt[0] = Prompt.success;
 
         return payDao.selectById(pay.payId);
+    }
+
+
+    public Object[] payWithConfirm(SessionPay sessionPay) {
+
+        Prompt prompt = Prompt.pay_error;
+        Prompt[] returnedPrompt = new Prompt[]{prompt};
+        AtomicReference<Pay> pay = new AtomicReference<>();
+
+        try {
+            transactionHandler.runInTransactionSerially(() -> {
+                pay.set(_pay(sessionPay.userId, sessionPay.merchantId, sessionPay.amount, sessionPay.paymentPassword,
+                        sessionPay.remarks, returnedPrompt));
+                return null;
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        prompt = returnedPrompt[0];
+
+        return new Object[]{prompt, pay};
     }
 }

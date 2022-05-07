@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 
 @Mapper
-public interface MerchantRsaPublicKeyMapper extends BaseMapper<MerchantRsaPublicKey> {
+public interface MerchantRsaPublicKeyDao extends BaseMapper<MerchantRsaPublicKey> {
 
 }
 

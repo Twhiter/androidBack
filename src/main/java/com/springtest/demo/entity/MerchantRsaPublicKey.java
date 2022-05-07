@@ -21,5 +21,5 @@ public class MerchantRsaPublicKey implements Serializable {
     /**
      *
      */
-    public Integer publicKey;
+    public String publicKey;
 }

@@ -3,11 +3,10 @@ package com.springtest.demo;
 
 import com.springtest.demo.dao.MerchantBillDao;
 import com.springtest.demo.dao.UserBillDao;
-import com.springtest.demo.redisDao.PhoneVerifyCodeDao;
 import com.springtest.demo.dao.UserDao;
 import com.springtest.demo.entity.User;
+import com.springtest.demo.redisDao.PhoneVerifyCodeDao;
 import com.springtest.demo.redisDao.TokenDao;
-import com.springtest.demo.redisEntity.Token;
 import com.springtest.demo.service.ServiceUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +117,7 @@ public class DemoApplicationTests {
 //        tokenDao.save(token);
 
 
-        tokenDao.findById(1).ifPresent(System.out::println);
+        tokenDao.findById("1").ifPresent(System.out::println);
 
         tokenDao.findByToken("123").forEach(System.out::println);
     }

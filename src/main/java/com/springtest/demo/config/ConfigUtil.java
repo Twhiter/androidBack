@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public class ConfigUtil {
 
 
+    //RSA public and private key for server
     public static final String PRIVATE_KEY_BASE64_ENCODED = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAvNpxoeBddSLWaHR+j9gZJiYjJ1JzpNnZoxYJjJOuXKM0eIOynt/i48JBB4Y8ReaoKGQHBnu2RLhSHxWtR5h0awIDAQABAkA2w4+1Fed0CsyrELEMzGkKj3+dLQM8+DFs4fyV59NlqCvqOrru49RDqAnz5/kcrQlX2tjxKEzrXifVuQq1sQedAiEA8xT2PKh/AHy7FPLeGMq/xxnXWNw85fn7ipI/+EMIg08CIQDG47jtidKsnyfNkNJy/RfOLe0tz7T4EyTITl32STRmJQIgVeb6fcUt3IY3ttd9FVXRIBNJvuVVwA/vjLDSWnGV+JECIQCRM5PBJ8u85v0CIObjuE724aS0u11dd2x1KHGE6vDsWQIgJfJ7du95X39zVGf5cRibIn9ZfV3KdghfUhv8zpMz2Ww=";
     public static final String PUBLIC_KEY_BASE64_ENCODED = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALzacaHgXXUi1mh0fo/YGSYmIydSc6TZ2aMWCYyTrlyjNHiDsp7f4uPCQQeGPEXmqChkBwZ7tkS4Uh8VrUeYdGsCAwEAAQ==";
 

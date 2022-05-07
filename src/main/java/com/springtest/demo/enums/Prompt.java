@@ -5,19 +5,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Prompt {
 
 
+    success(""),
     unknownError("Unknown Error,Please try again"),
 
     user_account_unverified("Your account is not verified!"),
     user_account_frozen("Your account is frozen. This means you are restricted to do some operations"),
-    use_successfully_login(""),
     user_fail_login("Wrong email or password"),
 
 
-    admin_successfully_login(""),
     admin_fail_login("Wrong account or password"),
 
-
-    pay_success(""),
     pay_error("error during payment"),
     pay_user_not_found_error("user not found"),
     pay_merchant_not_found_error("merchant not found"),
@@ -34,6 +31,13 @@ public enum Prompt {
     pay_amount_invalid_error("amount must be larger than 0"),
 
 
+    pay_session_id_error("Invalid QR Code"),
+    pay_time_out("Payment Timeout"),
+    multiple_user_pay_error("only one user can pay at one time"),
+    pay_verify_request_format_error("Wrong request format"),
+    pay_verify_merchant_key_not_exist("You haven't applied for keys"),
+    pay_verify_wrong_signature("Wrong signature"),
+
 
     transfer_source_not_exist("Transfer source account does not exist"),
     transfer_target_not_exist("Transfer target account does not exist"),
@@ -49,7 +53,6 @@ public enum Prompt {
     transfer_not_enough_balance("Not enough balance"),
     transfer_error("Error during transfer"),
     transfer_amount_invalid_error("amount must be larger than 0"),
-    transfer_success(""),
 
     payment_password_not_correct("payment password not correct"),
 

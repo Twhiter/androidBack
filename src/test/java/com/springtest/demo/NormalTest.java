@@ -1,5 +1,7 @@
 package com.springtest.demo;
 
+import com.springtest.demo.businessEntity.PaySemaphore;
+import com.springtest.demo.businessEntity.PaySemaphorePool;
 import com.springtest.demo.config.ConfigUtil;
 import com.springtest.demo.util.RSAUtil;
 import org.junit.jupiter.api.Test;
@@ -99,6 +101,23 @@ public class NormalTest {
 
         assert decyprtedBytes != null;
         System.out.println("equal original ? " + Arrays.equals(decyprtedBytes, text.getBytes(StandardCharsets.UTF_8)));
+
+
+    }
+
+    @Test
+    public void Test7() throws InterruptedException {
+
+
+        PaySemaphorePool pool = PaySemaphorePool.getInstance();
+
+        pool.add(new PaySemaphore(123));
+
+        var b = pool.get(123);
+
+        b.sessionId = 3;
+
+        System.out.println(pool.get(123).sessionId);
 
 
     }

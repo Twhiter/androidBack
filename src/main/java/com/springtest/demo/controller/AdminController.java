@@ -1,6 +1,5 @@
 package com.springtest.demo.controller;
 
-import com.springtest.demo.util.Util;
 import com.springtest.demo.dto.LoginResp;
 import com.springtest.demo.dto.ResponseData;
 import com.springtest.demo.entity.Admin;
@@ -8,6 +7,7 @@ import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.redisEntity.Token;
 import com.springtest.demo.service.AdminService;
 import com.springtest.demo.service.TokenService;
+import com.springtest.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,11 +38,11 @@ public class AdminController {
 
             resp.data = new LoginResp();
             resp.data.prompt = prompt;
-            resp.data.isOkay = (prompt.equals(Prompt.use_successfully_login));
+            resp.data.isOkay = (prompt.equals(Prompt.success));
 
 
             //if successful
-            if (prompt.equals(Prompt.use_successfully_login)) {
+            if (prompt.equals(Prompt.success)) {
 
                 String tokenStr = Util.generateToken("admin:" + admin.adminAccount);
 
