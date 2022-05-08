@@ -40,7 +40,7 @@ public class PayVerifyService {
 
             var data = merchantRsaPublicKeyDao.selectById(sessionPay.merchantId);
             if (data == null)
-                return Prompt.pay_verify_merchant_key_not_exist;
+                return Prompt.pay_merchant_key_not_exist;
 
             String base64PublicKey = data.publicKey;
             byte[] signatureBytes = Base64.decodeBase64(merchantVerifyInfo.signature);
@@ -54,9 +54,6 @@ public class PayVerifyService {
             e.printStackTrace();
             return Prompt.unknownError;
         }
-
-
     }
-
 
 }

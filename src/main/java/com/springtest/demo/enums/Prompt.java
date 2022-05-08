@@ -34,8 +34,12 @@ public enum Prompt {
     pay_session_id_error("Invalid QR Code"),
     pay_time_out("Payment Timeout"),
     multiple_user_pay_error("only one user can pay at one time"),
+
+
+    session_pay_request_format_error("Wrong request format"),
+
     pay_verify_request_format_error("Wrong request format"),
-    pay_verify_merchant_key_not_exist("You haven't applied for keys"),
+    pay_merchant_key_not_exist("You haven't applied for keys"),
     pay_verify_wrong_signature("Wrong signature"),
 
 

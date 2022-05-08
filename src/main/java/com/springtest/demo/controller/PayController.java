@@ -3,10 +3,7 @@ package com.springtest.demo.controller;
 
 import com.springtest.demo.businessEntity.PaySemaphore;
 import com.springtest.demo.businessEntity.PaySemaphorePool;
-import com.springtest.demo.dto.MerchantVerifyInfo;
-import com.springtest.demo.dto.PayOverview;
-import com.springtest.demo.dto.PayResp;
-import com.springtest.demo.dto.ResponseData;
+import com.springtest.demo.dto.*;
 import com.springtest.demo.entity.Pay;
 import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.redisEntity.SessionPay;
@@ -17,10 +14,7 @@ import com.springtest.demo.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
@@ -157,33 +151,38 @@ public class PayController {
         }
     }
 
-    //todo need a test
+
     @PostMapping("/api/payVerify")
-    public ResponseData<Prompt> verifyPay(@RequestParam(name = "body") String RSAEncryptedBase64String) {
+    public ResponseData<Prompt> verifyPay(@RequestBody String RSAEncryptedBase64String) {
 
 
         ResponseData<Prompt> resp = new ResponseData<>();
         resp.data = Prompt.unknownError;
 
         try {
+
+            //extract information
             MerchantVerifyInfo verifyInfo = payVerifyService.extractInfo(RSAEncryptedBase64String);
             if (verifyInfo == null) {
                 resp.data = Prompt.pay_verify_request_format_error;
                 return resp;
             }
 
+            //fetch sessionPay and check whether it exists or not
             SessionPay sessionPay = sessionPayService.getById(verifyInfo.sessionId);
             if (sessionPay == null) {
                 resp.data = Prompt.pay_time_out;
                 return resp;
             }
 
+            // get the paySemaphore and check whether it exists or not
             PaySemaphore paySemaphore = PaySemaphorePool.getInstance().get(sessionPay.sessionId);
-            if (paySemaphore == null || paySemaphore.notScanned.availablePermits() == 0) {
+            if (paySemaphore == null || paySemaphore.notScanned.availablePermits() == 1) {
                 resp.data = Prompt.pay_time_out;
                 return resp;
             }
 
+            //verify the signature
             Prompt prompt = payVerifyService.verify(verifyInfo, sessionPay);
             if (prompt != Prompt.success) {
                 resp.data = prompt;
@@ -191,6 +190,7 @@ public class PayController {
             }
 
 
+            //start persistent payment into database
             Object[] promptAndPay = payService.payWithConfirm(sessionPay);
             prompt = (Prompt) promptAndPay[0];
             Pay pay = (Pay) promptAndPay[1];
@@ -203,6 +203,7 @@ public class PayController {
             //assign the payment result to paySyn data
             paySemaphore.paySynData.payResp = payResp;
 
+            //release the semaphore in order to inform phoneScan
             paySemaphore.isFinished.release();
 
             resp.data = prompt;
@@ -213,4 +214,50 @@ public class PayController {
             return resp;
         }
     }
+
+
+    @PostMapping("/api/sessionPay")
+    public ResponseData<SessionPayResp> requestSessionPay(@RequestBody String RSAEncryptedBase64String) {
+
+        ResponseData<SessionPayResp> resp = new ResponseData<>();
+        resp.data = new SessionPayResp();
+
+
+        try {
+
+            //check the request format
+            var sessionRequest = sessionPayService.extractInfo(RSAEncryptedBase64String);
+            if (sessionRequest == null) {
+                resp.data.prompt = Prompt.session_pay_request_format_error;
+                return resp;
+            }
+
+            //verify the signature
+            Prompt prompt = sessionPayService.verifySessionRequest(sessionRequest);
+            if (prompt != Prompt.success) {
+                resp.data.prompt = prompt;
+                return resp;
+            }
+
+
+            //initialize
+            SessionPay sessionPay = sessionPayService.initialize(sessionRequest.merchantId, sessionRequest.amount);
+
+            //initialize pay semaphore
+            PaySemaphore paySemaphore = new PaySemaphore(sessionPay.sessionId);
+            PaySemaphorePool.getInstance().add(paySemaphore);
+
+
+            resp.data.sessionId = sessionPay.sessionId;
+            resp.data.prompt = Prompt.success;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.data.prompt = Prompt.unknownError;
+        }
+
+        return resp;
+    }
+
+
 }

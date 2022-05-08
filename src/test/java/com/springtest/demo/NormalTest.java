@@ -4,11 +4,13 @@ import com.springtest.demo.businessEntity.PaySemaphore;
 import com.springtest.demo.businessEntity.PaySemaphorePool;
 import com.springtest.demo.config.ConfigUtil;
 import com.springtest.demo.util.RSAUtil;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -81,14 +83,20 @@ public class NormalTest {
     public void Test6() throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, SignatureException, NoSuchAlgorithmException {
 
 
-        String text = "Hello World";
+        String text = """
+                {
+                   "sessionId": -1173613415,
+                   "signature": "hl1FyWg8dZkJKjM6H6dUEN4VOdTql5lhnc2iGCJjwcAlu9EAxTsVdMhBaixNSDeHY2JpUtin2NNMbH0gxhOrHzPYnuNk7+oH6n/a5XmCaOXB5o9R7yYdjiDGJY+dPxX/Bv74SGdog+BW/RlGsDQvnjFHF49bopZjNdZLbto+0oR5e4DleBHbIBsOSz2dI4WMGV3xVXjM2yDRiLH7B7HGtuStwD4Xz99SXFRAZIp7F0WXEBX9VbshQ3C9MvCe6uLbMlxQKUqZAAsa4mH6W0WsogFj/+pWX6UUu0C6oj6r8rNkrt9mXslJGogO+UVWrentA8MAcNtGu06r5Lw54DTq8g=="
+                }
+                                
+                """;
 
         var signature = RSAUtil.sign(text.getBytes(StandardCharsets.UTF_8), ConfigUtil.PRIVATE_KEY_BASE64_ENCODED);
 
         System.out.println(RSAUtil.verifySignature(signature, text.getBytes(StandardCharsets.UTF_8),
                 ConfigUtil.PUBLIC_KEY_BASE64_ENCODED));
 
-        System.out.println(RSAUtil.verifySignature(signature, "Hello world".getBytes(StandardCharsets.UTF_8),
+        System.out.println(RSAUtil.verifySignature(signature, text.getBytes(StandardCharsets.UTF_8),
                 ConfigUtil.PUBLIC_KEY_BASE64_ENCODED));
 
 
@@ -118,8 +126,33 @@ public class NormalTest {
         b.sessionId = 3;
 
         System.out.println(pool.get(123).sessionId);
+    }
 
 
+    @Test
+    public void Test8() {
+
+
+        var pair = RSAUtil.generateRsaKey();
+        assert pair != null;
+        var privateKey = pair.getPrivate();
+        var publicKey = pair.getPublic();
+
+
+        var privateKeyBase64 = Base64.encodeBase64String(privateKey.getEncoded());
+        var publicKeyBase64 = Base64.encodeBase64String(publicKey.getEncoded());
+
+
+        System.out.println("publicKey:" + publicKeyBase64);
+        System.out.println("privateKey:" + privateKeyBase64);
+
+    }
+
+
+    @Test
+    public void Test9() {
+
+        System.out.printf("%d,%s%n", 1, new BigDecimal("123.34"));
     }
 
 

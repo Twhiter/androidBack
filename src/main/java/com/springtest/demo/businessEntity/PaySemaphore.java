@@ -8,6 +8,7 @@ public class PaySemaphore {
     public Semaphore notScanned = new Semaphore(1);
     public Semaphore isPaid = new Semaphore(1);
     public Semaphore isFinished = new Semaphore(1);
+    public boolean isWebSocketConnected = false;
 
     public PaySynData paySynData = new PaySynData();
 

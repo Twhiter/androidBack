@@ -122,6 +122,6 @@ public class PayService {
 
         prompt = returnedPrompt[0];
 
-        return new Object[]{prompt, pay};
+        return new Object[]{prompt, pay.get()};
     }
 }
