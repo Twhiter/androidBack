@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 
 @Service
@@ -97,7 +98,8 @@ public class SessionPayService {
             byte[] signatureBytes = Base64.decodeBase64(sessionPayRequest.signature);
 
 
-            byte[] supposedText = String.format("%d,%s", sessionPayRequest.merchantId, sessionPayRequest.amount)
+            byte[] supposedText = String.format("%d,%s", sessionPayRequest.merchantId,
+                    sessionPayRequest.amount.setScale(2, RoundingMode.UNNECESSARY))
                     .getBytes(StandardCharsets.UTF_8);
 
             if (RSAUtil.verifySignature(signatureBytes, supposedText, base64PublicKey))
@@ -108,8 +110,11 @@ public class SessionPayService {
             e.printStackTrace();
             return Prompt.unknownError;
         }
+    }
 
 
+    public void delete(int sessionId) {
+        sessionPayDao.deleteById(sessionId);
     }
 
 

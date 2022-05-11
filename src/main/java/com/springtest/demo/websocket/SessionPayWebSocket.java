@@ -40,7 +40,7 @@ public class SessionPayWebSocket extends TextWebSocketHandler {
             timer = new Thread(() -> {
 
                 try {
-                    Thread.sleep(150 * 60);
+                    Thread.sleep(150 * 1000);
                     closeSession(session);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -64,6 +64,7 @@ public class SessionPayWebSocket extends TextWebSocketHandler {
 
         PaySemaphore paySemaphore = PaySemaphorePool.getInstance().get(sessionPayId);
         paySemaphore.isWebSocketConnected = false;
+
 
         if (phonePaidListener != null && phonePaidListener.isAlive())
             phonePaidListener.stop();
@@ -149,6 +150,8 @@ public class SessionPayWebSocket extends TextWebSocketHandler {
                 closeSession(socketSession);
                 return;
             }
+
+            socketSession.sendMessage(new TextMessage("Success"));
 
             paySemaphore.isFinished.release();
         } catch (Exception e) {

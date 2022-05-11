@@ -39,4 +39,10 @@ public class PaySemaphorePool {
     public boolean exist(int sessionId) {
         return get(sessionId) != null;
     }
+
+    public void delete(int sessionId) {
+        cache.invalidate(sessionId);
+    }
+
+
 }

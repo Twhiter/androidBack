@@ -19,21 +19,21 @@ public class GetUserIdFromTokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-       String tokenStr = request.getHeader("token");
-       if (tokenStr == null)
-           return false;
+        try {
+            String tokenStr = request.getHeader("token");
+            if (tokenStr == null)
+                return false;
 
-       String id = tokenService.verify(tokenStr);
-       if (id == null)
-           return false;
+            String id = tokenService.verify(tokenStr);
+            if (id == null)
+                return false;
 
-       try {
-           int user_id = Integer.parseInt(id);
-           request.setAttribute("userId",user_id);
-           return true;
-       }catch (Exception e) {
-           return false;
-       }
+            int user_id = Integer.parseInt(id);
+            request.setAttribute("userId", user_id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
 
     }
 }

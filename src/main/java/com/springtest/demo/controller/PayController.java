@@ -142,6 +142,7 @@ public class PayController {
             paySemaphore.notScanned.release();
 
             responseData.data = paySemaphore.paySynData.payResp;
+
             return responseData;
 
         } catch (Exception e) {
@@ -195,10 +196,12 @@ public class PayController {
             prompt = (Prompt) promptAndPay[0];
             Pay pay = (Pay) promptAndPay[1];
 
-
             PayResp payResp = new PayResp();
             payResp.prompt = prompt;
             payResp.payOverview = PayOverview.fromPay(pay);
+
+            //remove data in redis
+            sessionPayService.delete(sessionPay.sessionId);
 
             //assign the payment result to paySyn data
             paySemaphore.paySynData.payResp = payResp;

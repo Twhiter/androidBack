@@ -102,6 +102,16 @@ public class Util {
 
 
         int idx = phone.length() - 4;
-        return phone.substring(0,idx) + "****";
+        return phone.substring(0, idx) + "****";
+    }
+
+
+    public static boolean isInteger(String x) {
+        try {
+            Integer.parseInt(x);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

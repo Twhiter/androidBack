@@ -7,10 +7,13 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Component
-public class InterceptorConfig  implements WebMvcConfigurer {
+public class InterceptorConfig implements WebMvcConfigurer {
 
     @Autowired
     GetUserIdFromTokenInterceptor getUserIdFromTokenInterceptor;
+
+    @Autowired
+    GetAdminIdFromInterceptor getAdminIdFromInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -20,6 +23,12 @@ public class InterceptorConfig  implements WebMvcConfigurer {
                 .addPathPatterns("/api/pay")
                 .addPathPatterns("/api/transfer")
                 .addPathPatterns("/api/bills/merchant", "/api/bills/user")
-                .addPathPatterns("/api/merchant");
+                .addPathPatterns("/api/merchant")
+                .addPathPatterns("/api/payWithConfirm");
+
+
+        //registry.addInterceptor(getAdminIdFromInterceptor);
+
+
     }
 }
