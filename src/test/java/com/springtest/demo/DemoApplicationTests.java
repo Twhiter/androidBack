@@ -14,6 +14,7 @@ import com.springtest.demo.dao.UserDao;
 import com.springtest.demo.dto.MerchantVerifyInfo;
 import com.springtest.demo.dto.PayResp;
 import com.springtest.demo.dto.ResponseData;
+import com.springtest.demo.dto.UserAndMerchant;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.redisDao.PhoneVerifyCodeDao;
@@ -214,8 +215,13 @@ public class DemoApplicationTests {
 
     }
 
+
     @Test
     public void test8() {
+
+        var s = userDao.getMerchantAndUser(10, 1);
+
+        System.out.println(s.stream().map(UserAndMerchant::fromUserJoinMerchant).toList());
 
 
     }
