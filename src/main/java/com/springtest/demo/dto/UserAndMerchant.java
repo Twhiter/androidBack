@@ -41,7 +41,7 @@ public class UserAndMerchant {
         um.merchant.merchantLicensePhoto = userJoinMerchant.merchantLicensePhoto;
         um.merchant.merchantPhoneNumber = userJoinMerchant.merchantPhoneNumber;
         um.merchant.merchantLogo = userJoinMerchant.merchantLogo;
-        um.merchant.merchantEmail = userJoinMerchant.email;
+        um.merchant.merchantEmail = userJoinMerchant.merchantEmail;
         um.merchant.frozenMoney = userJoinMerchant.merchantFrozenMoney;
         um.merchant.moneyAmount = userJoinMerchant.merchantMoneyAmount;
         um.merchant.state = userJoinMerchant.merchantState;

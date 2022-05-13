@@ -1,16 +1,23 @@
 package com.springtest.demo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.springtest.demo.dao.UserDao;
 import com.springtest.demo.dto.OverviewInfo;
 import com.springtest.demo.dto.Page;
+import com.springtest.demo.dto.UserAndMerchant;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.Prompt;
+import com.springtest.demo.enums.State;
+import com.springtest.demo.util.LambdaLogicChain;
+import com.springtest.demo.util.TransactionHandler;
 import com.springtest.demo.util.Util;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,22 +29,25 @@ public class UserService {
     @Autowired
     UserDao userDao;
 
+    @Autowired
+    TransactionHandler transactionHandler;
+
 
     public void register(User user) {
         userDao.insert(user);
     }
 
 
-    public Map<String,Object> login(String phoneNumber, String password) {
+    public Map<String, Object> login(String phoneNumber, String password) {
 
-        var s = new HashMap<String,Object>();
+        var s = new HashMap<String, Object>();
 
         User user = userDao.selectOne(new QueryWrapper<User>().
                 eq("phone_number", phoneNumber)
                 .eq("password", password)
         );
 
-        s.put("user",user);
+        s.put("user", user);
 
         if (user == null)
              s.put("prompt",Prompt.user_fail_login);
@@ -159,14 +169,155 @@ public class UserService {
         pageObj.pageSize = count;
 
         if (EmailValidator.getInstance().isValid(keyword)) {
-            pageObj = getUserOverviewInfosByEmailEncoded(keyword.toLowerCase(),page,count);
-        }else if (keyword.matches("\\+\\d+")) {
+            pageObj = getUserOverviewInfosByEmailEncoded(keyword.toLowerCase(), page, count);
+        } else if (keyword.matches("\\+\\d+")) {
             var info = this.getUserOverviewInfoByPhoneEncoded(keyword.toLowerCase());
             if (info != null)
                 pageObj.data.add(info);
-        }else
-            pageObj = getUserOverviewInfoByNameRoughlyEncoded(keyword.toLowerCase(),page,count);
+        } else
+            pageObj = getUserOverviewInfoByNameRoughlyEncoded(keyword.toLowerCase(), page, count);
         return pageObj;
     }
+
+
+    public Page<UserAndMerchant> getUsers(int pageNumber, int pageSize) {
+
+
+        Page<UserAndMerchant> pageObj = new Page<>();
+
+        var data = userDao.getMerchantAndUser(pageSize, pageNumber);
+
+        pageObj.currentPage = pageNumber;
+        pageObj.pageSize = pageSize;
+        pageObj.data = data.stream().map(UserAndMerchant::fromUserJoinMerchant).toList();
+
+        int count = Math.toIntExact(userDao.selectCount(new QueryWrapper<User>().ne("state", State.unverified)));
+
+        pageObj.maxPage = (int) Math.ceil(1.0 * count / pageSize);
+
+
+        return pageObj;
+    }
+
+
+    public Prompt freezeUser(int userId) {
+
+        try {
+            User user = userDao.selectById(userId);
+
+            LambdaLogicChain<Prompt> chain = new LambdaLogicChain<>();
+
+
+            var prompt = chain.process(() -> user == null ? Prompt.freeze_user_not_exist_error : null,
+                    () -> user.state == State.unverified ? Prompt.freeze_user_account_not_verified : null
+            );
+
+            if (prompt != null)
+                return prompt;
+
+            userDao.update(null, new UpdateWrapper<User>().set("state", State.frozen).eq("user_id", userId));
+            return Prompt.success;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Prompt.unknownError;
+        }
+    }
+
+
+    public Prompt unfreezeUser(int userId) {
+
+        try {
+            User user = userDao.selectById(userId);
+
+            LambdaLogicChain<Prompt> chain = new LambdaLogicChain<>();
+
+
+            var prompt = chain.process(() -> user == null ? Prompt.unfreeze_user_not_exist_error : null,
+                    () -> user.state == State.unverified ? Prompt.unfreeze_user_account_not_verified : null
+            );
+
+            if (prompt != null)
+                return prompt;
+
+            userDao.update(null, new UpdateWrapper<User>().set("state", State.normal).eq("user_id", userId));
+            return Prompt.success;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Prompt.unknownError;
+        }
+
+    }
+
+    public Prompt freezeUserBalance(int userId, BigDecimal amount) {
+
+        try {
+
+            BigDecimal formattedAmount = amount.setScale(2, RoundingMode.UNNECESSARY);
+            return transactionHandler.runInNewTransaction(() -> {
+
+
+                User user = userDao.selectById(userId);
+
+                LambdaLogicChain<Prompt> chain = new LambdaLogicChain<>();
+
+                Prompt result = chain.process(
+                        () -> user == null ? Prompt.freeze_user_balance_user_not_exist : null,
+                        () -> user.state == State.unverified ? Prompt.freeze_user_balance_user_account_not_verified : null,
+                        () -> user.moneyAmount.compareTo(formattedAmount) < 0 ? Prompt.freeze_user_balance_user_not_enough_balance : null,
+                        () -> formattedAmount.compareTo(BigDecimal.ZERO) == 0 ? Prompt.invalid_amount : null
+                );
+
+                if (result != null)
+                    return result;
+
+
+                user.moneyAmount = user.moneyAmount.subtract(formattedAmount);
+                user.frozenMoney = user.frozenMoney.add(formattedAmount);
+
+                userDao.updateById(user);
+                return Prompt.success;
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Prompt.unknownError;
+        }
+    }
+
+
+    public Prompt unfreezeUserBalance(int userId, BigDecimal amount) {
+
+        try {
+
+            BigDecimal formattedAmount = amount.setScale(2, RoundingMode.UNNECESSARY);
+            return transactionHandler.runInNewTransaction(() -> {
+
+
+                User user = userDao.selectById(userId);
+
+                LambdaLogicChain<Prompt> chain = new LambdaLogicChain<>();
+
+                Prompt result = chain.process(
+                        () -> user == null ? Prompt.freeze_user_balance_user_not_exist : null,
+                        () -> user.state == State.unverified ? Prompt.freeze_user_balance_user_account_not_verified : null,
+                        () -> user.frozenMoney.compareTo(formattedAmount) < 0 ? Prompt.unfreeze_user_balance_frozen_amount_not_enough : null,
+                        () -> formattedAmount.compareTo(BigDecimal.ZERO) == 0 ? Prompt.invalid_amount : null
+                );
+
+                if (result != null)
+                    return result;
+
+
+                user.moneyAmount = user.moneyAmount.add(formattedAmount);
+                user.frozenMoney = user.frozenMoney.subtract(formattedAmount);
+
+                userDao.updateById(user);
+                return Prompt.success;
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Prompt.unknownError;
+        }
+    }
+
 
 }

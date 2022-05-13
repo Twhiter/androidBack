@@ -17,6 +17,7 @@ public interface UserDao extends BaseMapper<User> {
             "       merchant.frozen_money as merchant_frozen_money," +
             "       merchant.money_amount as merchant_money_amount," +
             "       merchant.state as merchant_state from user left  join merchant on user.user_id = merchant.merchant_user_id" +
+            "       where user.state != 'unverified'  " +
             "       limit ${(pageNumber - 1) * pageSize},#{pageSize}")
     List<UserJoinMerchant> getMerchantAndUser(int pageSize, int pageNumber);
 

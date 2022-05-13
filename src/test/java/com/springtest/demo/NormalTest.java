@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -152,7 +151,7 @@ public class NormalTest {
     @Test
     public void Test9() {
 
-        System.out.printf("%d,%s%n", 1, new BigDecimal("123.34"));
+        System.out.println(Math.ceil(1.0 * 2 / 10));
     }
 
 

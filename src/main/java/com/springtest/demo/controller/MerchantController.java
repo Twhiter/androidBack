@@ -2,13 +2,13 @@ package com.springtest.demo.controller;
 
 
 import com.springtest.demo.config.StaticFileConfig;
-import com.springtest.demo.dto.OverviewInfo;
-import com.springtest.demo.dto.ResponseData;
+import com.springtest.demo.dto.*;
 import com.springtest.demo.entity.Merchant;
 import com.springtest.demo.enums.FileType;
 import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.service.FileService;
 import com.springtest.demo.service.MerchantService;
+import com.springtest.demo.service.ServiceUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.mail.MessagingException;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 @RestController
 public class MerchantController {
@@ -28,6 +30,9 @@ public class MerchantController {
     @Autowired
     FileService fileService;
 
+    @Autowired
+    ServiceUtil serviceUtil;
+
 
     @GetMapping("/api/merchant")
     public ResponseData<Merchant> getMerchantByUserId(@RequestParam("userId") int userId) {
@@ -37,7 +42,7 @@ public class MerchantController {
 
         try {
             resp.data = merchantService.getMerchantByUserId(userId);
-        }catch (Exception e) {
+        } catch (Exception e) {
             resp.status = ResponseData.ERROR;
             resp.errorPrompt = "Error";
         }
@@ -45,14 +50,14 @@ public class MerchantController {
     }
 
     @GetMapping("/api/merchant/{id}")
-    public ResponseData<Merchant> getMerchantById(@PathVariable("id")int id) {
+    public ResponseData<Merchant> getMerchantById(@PathVariable("id") int id) {
 
         ResponseData<Merchant> resp = new ResponseData<>();
         resp.status = ResponseData.OK;
 
         try {
             resp.data = merchantService.getMerchantById(id);
-        }catch (Exception e) {
+        } catch (Exception e) {
             resp.status = ResponseData.ERROR;
             resp.errorPrompt = "Error";
         }
@@ -136,6 +141,102 @@ public class MerchantController {
         }
 
 
+    }
+
+
+    @GetMapping("/api/merchants/{pageNumber}")
+    public ResponseData<Page<UserAndMerchant>> getMerchants(@PathVariable int pageNumber,
+                                                            @RequestParam(value = "pageSize", required = false, defaultValue = "10")
+                                                                    int pageSize) {
+
+
+        ResponseData<Page<UserAndMerchant>> resp = new ResponseData<>();
+        resp.status = ResponseData.OK;
+
+        try {
+            resp.data = merchantService.getMerchants(pageNumber, pageSize);
+        } catch (Exception e) {
+            resp.status = ResponseData.ERROR;
+            resp.errorPrompt = "Error";
+        }
+        return resp;
+    }
+
+
+    @PutMapping("/api/merchants/state")
+    public ResponseData<Prompt> updateUserState(@RequestBody ModifyStateRequest obj) {
+
+        ResponseData<Prompt> resp = new ResponseData<>();
+
+        try {
+            Merchant merchant = merchantService.getMerchantById(obj.id);
+
+            switch (obj.state) {
+                case frozen -> {
+                    resp.data = merchantService.freezeMerchant(obj.id);
+                    if (resp.data != Prompt.success)
+                        return resp;
+
+                    new Thread(() -> {
+                        try {
+                            serviceUtil.sendFrozenMessage(merchant.merchantEmail, merchant.merchantPhoneNumber, obj.reasons);
+                        } catch (MessagingException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+
+                }
+                case normal -> resp.data = merchantService.unfreezeMerchant(obj.id);
+                case unverified -> throw new Exception();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.data = Prompt.unknownError;
+        }
+
+        return resp;
+    }
+
+
+    @PutMapping("/api/merchant/frozenAmount")
+    public ResponseData<Prompt> updateMerchantFrozenAmount(@RequestBody ModifyFrozenAmount obj) {
+
+        ResponseData<Prompt> resp = new ResponseData<>();
+
+        try {
+
+            if (obj.amount.compareTo(BigDecimal.ZERO) > 0)
+                resp.data = merchantService.freezeMerchantBalance(obj.id, obj.amount);
+            else
+                resp.data = merchantService.unfreezeMerchantBalance(obj.id, obj.amount.multiply(BigDecimal.valueOf(-1)));
+
+
+            if (resp.data != Prompt.success)
+                return resp;
+
+            try {
+                Merchant merchant = merchantService.getMerchantById(obj.id);
+                new Thread(() -> {
+
+                    try {
+                        serviceUtil.sendFrozenBalanceMessage(merchant.merchantEmail, merchant.merchantPhoneNumber, obj.reasons, obj.amount);
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                    }
+
+                }).start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.data = Prompt.unknownError;
+        }
+
+        return resp;
     }
 
 

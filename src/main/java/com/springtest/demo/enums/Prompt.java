@@ -62,7 +62,37 @@ public enum Prompt {
 
     merchant_phoneNumber_already_exist("The company/organization phone already registered"),
     merchant_license_number_already_exist("The compant/organization license number already registered"),
-    duplicate_register("You have already registered a merchant account!");
+    duplicate_register("You have already registered a merchant account!"),
+
+
+    freeze_user_not_exist_error("user not exist"),
+    freeze_user_account_not_verified("User Account is not verified!"),
+
+    unfreeze_user_not_exist_error("user not exist"),
+    unfreeze_user_account_not_verified("User Account is not verified!"),
+
+
+    freeze_merchant_not_exist("Merchant not exist"),
+    freeze_merchant_account_not_verified("Merchant Account is not verified!"),
+
+    unfreeze_merchant_not_exist_error("merchant not exist"),
+    unfreeze_merchant_account_not_verified("Merchant Account is not verified!"),
+
+
+    freeze_user_balance_user_not_exist("user not exist"),
+    freeze_user_balance_user_not_enough_balance("user doesn't own enough balance"),
+    freeze_user_balance_user_account_not_verified("User account is not verified"),
+
+
+    unfreeze_user_balance_frozen_amount_not_enough("exceed frozen amount"),
+
+
+    freeze_merchant_balance_merchant_not_exist("merchant not exist"),
+    freeze_merchant_balance_merchant_not_enough_balance("merchant doesn't own enough balance"),
+    freeze_merchant_balance_merchant_account_not_verified("merchant account is not verified"),
+    unfreeze_merchant_balance_frozen_amount_not_enough("exceed frozen amount"),
+
+    invalid_amount("Invalid Amount");
 
 
     @JsonValue
