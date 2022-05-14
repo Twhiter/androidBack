@@ -163,7 +163,7 @@ public class MerchantController {
     }
 
 
-    @PutMapping("/api/merchants/state")
+    @PutMapping("/api/merchant/state")
     public ResponseData<Prompt> updateUserState(@RequestBody ModifyStateRequest obj) {
 
         ResponseData<Prompt> resp = new ResponseData<>();
@@ -237,6 +237,91 @@ public class MerchantController {
         }
 
         return resp;
+    }
+
+
+    @GetMapping("/api/merchants/unverified/{pageNumber}")
+    public ResponseData<Page<Merchant>> getUnverifiedMerchants(@PathVariable int pageNumber,
+                                                               @RequestParam(name = "pageSize", required = false, defaultValue = "10")
+                                                                       int pageSize
+    ) {
+
+
+        ResponseData<Page<Merchant>> resp = new ResponseData<>();
+        try {
+            resp.data = merchantService.getUnverifiedMerchants(pageSize, pageNumber);
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.status = ResponseData.ERROR;
+            return resp;
+        }
+    }
+
+    @PutMapping("/api/merchant/unverified")
+    public ResponseData<Prompt> acceptUser(@RequestBody int merchantId) {
+
+        ResponseData<Prompt> resp = new ResponseData<>();
+
+        try {
+            resp.data = merchantService.acceptMerchant(merchantId);
+            if (resp.data != Prompt.success)
+                return resp;
+            else {
+
+                Merchant merchant = merchantService.getMerchantById(merchantId);
+
+                new Thread(() -> {
+                    try {
+                        serviceUtil.sendAcceptMessage(merchant.merchantEmail, merchant.merchantPhoneNumber);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+                return resp;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.data = Prompt.unknownError;
+            return resp;
+        }
+
+    }
+
+
+    @PostMapping("/api/merchant/reject")
+    public ResponseData<Prompt> rejectUser(@RequestBody RejectRequest obj) {
+
+        ResponseData<Prompt> responseData = new ResponseData<>();
+
+
+        try {
+
+            Merchant merchant = merchantService.getMerchantById(obj.id);
+
+            responseData.data = merchantService.deleteMerchant(obj.id);
+            if (responseData.data != Prompt.success)
+                return responseData;
+
+            new Thread(() -> {
+
+                try {
+                    serviceUtil.sendRejectMessage(merchant.merchantEmail, merchant.merchantPhoneNumber, obj.reasons);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }).start();
+
+            return responseData;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseData.data = Prompt.unknownError;
+            return responseData;
+        }
+
     }
 
 

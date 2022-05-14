@@ -10,7 +10,6 @@ import com.springtest.demo.redisEntity.SessionPay;
 import com.springtest.demo.service.PayService;
 import com.springtest.demo.service.PayVerifyService;
 import com.springtest.demo.service.SessionPayService;
-import com.springtest.demo.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +29,6 @@ public class PayController {
 
     @Autowired
     private SessionPayService sessionPayService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private PayVerifyService payVerifyService;
@@ -262,5 +258,27 @@ public class PayController {
         return resp;
     }
 
+
+    @GetMapping("/api/payment/{pageNum}")
+    public ResponseData<Page<PaymentWithRefund>> getAllPayments(@PathVariable int pageNum,
+                                                                @RequestParam(value = "pageSize", required = false, defaultValue = "10")
+                                                                        int pageSize
+    ) {
+
+
+        ResponseData<Page<PaymentWithRefund>> resp = new ResponseData<>();
+
+        try {
+
+            resp.data = payService.getAllPays(pageSize, pageNum);
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            resp.errorPrompt = ResponseData.unknownError;
+            resp.status = ResponseData.ERROR;
+            return resp;
+        }
+    }
 
 }

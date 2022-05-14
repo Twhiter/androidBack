@@ -1,20 +1,15 @@
 package com.springtest.demo.controller;
 
-import com.springtest.demo.dto.PayOverview;
-import com.springtest.demo.dto.PayResp;
+import com.springtest.demo.dto.Page;
 import com.springtest.demo.dto.ResponseData;
 import com.springtest.demo.dto.TransferResp;
-import com.springtest.demo.entity.Pay;
 import com.springtest.demo.entity.Transfer;
 import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.service.TransferService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
@@ -43,14 +38,34 @@ public class TransferController {
         responseData.data = new TransferResp();
 
         try{
-            var promptAndTransfer = transferService.transfer(sourceId, targetUserId, amount,paymentPassword,remarks);
+            var promptAndTransfer = transferService.transfer(sourceId, targetUserId, amount, paymentPassword, remarks);
             responseData.data.prompt = (Prompt) promptAndTransfer[0];
             responseData.data.transfer = (Transfer) promptAndTransfer[1];
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             responseData.errorPrompt = "Error";
             responseData.status = ResponseData.ERROR;
         }
         return responseData;
+    }
+
+
+    @GetMapping("/api/transfers/{pageNum}")
+    public ResponseData<Page<Transfer>> getAllTransfers(@PathVariable int pageNum,
+                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "10")
+                                                                int pageSize) {
+
+        ResponseData<Page<Transfer>> resp = new ResponseData<>();
+
+        try {
+
+            resp.data = transferService.getAllTransfers(pageNum, pageSize);
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.status = ResponseData.ERROR;
+            resp.errorPrompt = ResponseData.unknownError;
+            return resp;
+        }
     }
 }

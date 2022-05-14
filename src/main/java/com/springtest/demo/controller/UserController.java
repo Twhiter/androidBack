@@ -290,4 +290,90 @@ public class UserController {
         return resp;
     }
 
+
+    @GetMapping("/api/users/unverified/{pageNum}")
+    public ResponseData<Page<User>> getUnverifiedUsers(@RequestParam(name = "pageSize", required = false, defaultValue = "10")
+                                                               int pageSize,
+                                                       @PathVariable int pageNum
+    ) {
+
+        ResponseData<Page<User>> resp = new ResponseData<>();
+        try {
+            resp.data = userService.getUnverifiedUsers(pageSize, pageNum);
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.status = ResponseData.ERROR;
+            return resp;
+        }
+    }
+
+
+    @PutMapping("/api/user/unverified")
+    public ResponseData<Prompt> acceptUser(@RequestBody int userId) {
+
+        ResponseData<Prompt> resp = new ResponseData<>();
+
+        try {
+            resp.data = userService.acceptUser(userId);
+            if (resp.data != Prompt.success)
+                return resp;
+            else {
+
+                User user = userService.getUserByAdmin(userId);
+
+                new Thread(() -> {
+                    try {
+                        serviceUtill.sendAcceptMessage(user.email, user.phoneNumber);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+                return resp;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.data = Prompt.unknownError;
+            return resp;
+        }
+
+    }
+
+
+    @PostMapping("/api/user/reject")
+    public ResponseData<Prompt> rejectUser(@RequestBody RejectRequest obj) {
+
+        ResponseData<Prompt> responseData = new ResponseData<>();
+
+
+        try {
+
+            User user = userService.getUserByAdmin(obj.id);
+
+            responseData.data = userService.deleteUser(obj.id);
+            if (responseData.data != Prompt.success)
+                return responseData;
+
+            new Thread(() -> {
+
+                try {
+                    serviceUtill.sendRejectMessage(user.email, user.phoneNumber, obj.reasons);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }).start();
+
+            return responseData;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseData.data = Prompt.unknownError;
+            return responseData;
+        }
+
+    }
+
+
 }

@@ -92,7 +92,14 @@ public enum Prompt {
     freeze_merchant_balance_merchant_account_not_verified("merchant account is not verified"),
     unfreeze_merchant_balance_frozen_amount_not_enough("exceed frozen amount"),
 
-    invalid_amount("Invalid Amount");
+    invalid_amount("Invalid Amount"),
+
+
+    accept_user_not_exist("User account doesn't exist"),
+    unable_to_delete_verified_user("Unable to delete verified user"),
+
+    accept_merchant_not_exist("Merchant account doesn't exist"),
+    unable_to_delete_verified_merchant("Unable to delete verified merchant");
 
 
     @JsonValue

@@ -5,6 +5,8 @@ import com.springtest.demo.config.ConfigUtil;
 import com.springtest.demo.dao.MerchantDao;
 import com.springtest.demo.dao.PayDao;
 import com.springtest.demo.dao.UserDao;
+import com.springtest.demo.dto.Page;
+import com.springtest.demo.dto.PaymentWithRefund;
 import com.springtest.demo.entity.Merchant;
 import com.springtest.demo.entity.Pay;
 import com.springtest.demo.entity.User;
@@ -124,4 +126,24 @@ public class PayService {
 
         return new Object[]{prompt, pay.get()};
     }
+
+
+    public Page<PaymentWithRefund> getAllPays(int pageSize, int pageNum) {
+        Page<PaymentWithRefund> pageObj = new Page<>();
+
+        var data = payDao.getAllPays(pageNum, pageSize);
+
+        pageObj.currentPage = pageNum;
+        pageObj.pageSize = pageSize;
+        pageObj.data = data;
+
+        int count = Math.toIntExact(payDao.selectCount(null));
+
+        pageObj.maxPage = (int) Math.ceil(1.0 * count / pageSize);
+
+
+        return pageObj;
+    }
+
+
 }

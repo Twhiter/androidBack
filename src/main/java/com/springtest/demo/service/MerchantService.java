@@ -239,4 +239,68 @@ public class MerchantService {
     }
 
 
+    public Page<Merchant> getUnverifiedMerchants(int pageSize, int pageNumber) {
+
+        Page<Merchant> pageObj = new Page<>();
+
+        pageObj.currentPage = pageNumber;
+        pageObj.pageSize = pageSize;
+
+        pageObj.data = merchantDao.selectList(new QueryWrapper<Merchant>().eq("state", State.unverified)
+                .last(String.format("limit %d,%d", (pageNumber - 1) * pageSize, pageSize)));
+
+        int count = Math.toIntExact(merchantDao.selectCount(new QueryWrapper<Merchant>().eq("state", State.unverified)));
+
+        pageObj.maxPage = (int) Math.ceil(1.0 * count / pageSize);
+        return pageObj;
+    }
+
+    public Prompt acceptMerchant(int merchantId) {
+        try {
+            Merchant merchant = merchantDao.selectById(merchantId);
+
+            LambdaLogicChain<Prompt> chain = new LambdaLogicChain<>();
+
+
+            var prompt = chain.process(() -> merchant == null ? Prompt.accept_merchant_not_exist : null);
+
+            if (prompt != null)
+                return prompt;
+
+            merchantDao.update(null, new UpdateWrapper<Merchant>().set("state", State.normal)
+                    .eq("merchant_id", merchantId));
+            return Prompt.success;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Prompt.unknownError;
+        }
+    }
+
+
+    public Prompt deleteMerchant(int merchantId) {
+
+        try {
+            Merchant merchant = merchantDao.selectById(merchantId);
+
+            LambdaLogicChain<Prompt> chain = new LambdaLogicChain<>();
+
+
+            var prompt = chain.process(
+                    () -> merchant == null ? Prompt.accept_merchant_not_exist : null,
+                    () -> merchant.state != State.unverified ? Prompt.unable_to_delete_verified_merchant : null
+            );
+
+            if (prompt != null)
+                return prompt;
+
+            merchantDao.deleteById(merchantId);
+            return Prompt.success;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Prompt.unknownError;
+        }
+
+    }
+
+
 }

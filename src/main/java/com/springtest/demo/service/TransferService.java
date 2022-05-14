@@ -1,7 +1,9 @@
 package com.springtest.demo.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.springtest.demo.dao.TransferDao;
 import com.springtest.demo.dao.UserDao;
+import com.springtest.demo.dto.Page;
 import com.springtest.demo.entity.Transfer;
 import com.springtest.demo.entity.User;
 import com.springtest.demo.enums.Prompt;
@@ -96,8 +98,25 @@ public class TransferService {
     }
 
 
+    public Page<Transfer> getAllTransfers(int pageNum, int pageSize) {
+
+        Page<Transfer> pageObj = new Page<>();
+
+        var data = transferDao.selectList(new QueryWrapper<Transfer>()
+                .last(String.format("limit %d,%d", (pageNum - 1) * pageSize, pageSize)));
+
+        pageObj.currentPage = pageNum;
+        pageObj.pageSize = pageSize;
+        pageObj.data = data;
+
+        int count = Math.toIntExact(transferDao.selectCount(null));
+
+        pageObj.maxPage = (int) Math.ceil(1.0 * count / pageSize);
+
+        return pageObj;
 
 
+    }
 
 
 }

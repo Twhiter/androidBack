@@ -89,6 +89,28 @@ public class ServiceUtil {
 
         Util.sendEmail(email, text, title);
         Util.sendSMSText(telephone, text);
+    }
+
+
+    public void sendAcceptMessage(String email, String telephone) throws MessagingException {
+
+        String text = "Congratulation! Your Account is verified successfully. You can login in the app now";
+        String title = "Verification Passed";
+
+        Util.sendEmail(email, text, title);
+        Util.sendSMSText(telephone, text);
+
+    }
+
+
+    public void sendRejectMessage(String email, String telephone, String reasons) throws MessagingException {
+
+        String text = String
+                .format("We are sorry to inform you that verification of your account failed for these reasons:\n%s", reasons);
+        String title = "Verification of your account doesn't pass";
+
+        Util.sendEmail(email, text, title);
+        Util.sendSMSText(telephone, text);
 
 
     }

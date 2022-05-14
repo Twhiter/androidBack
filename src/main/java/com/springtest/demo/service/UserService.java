@@ -320,4 +320,66 @@ public class UserService {
     }
 
 
+    public Page<User> getUnverifiedUsers(int pageSize, int pageNumber) {
+
+        Page<User> pageObj = new Page<>();
+
+        pageObj.currentPage = pageNumber;
+        pageObj.pageSize = pageSize;
+
+        pageObj.data = userDao.selectList(new QueryWrapper<User>().eq("state", State.unverified)
+                .last(String.format("limit %d,%d", (pageNumber - 1) * pageSize, pageSize)));
+
+        int count = Math.toIntExact(userDao.selectCount(new QueryWrapper<User>().eq("state", State.unverified)));
+
+        pageObj.maxPage = (int) Math.ceil(1.0 * count / pageSize);
+        return pageObj;
+    }
+
+
+    public Prompt acceptUser(int userId) {
+        try {
+            User user = userDao.selectById(userId);
+
+            LambdaLogicChain<Prompt> chain = new LambdaLogicChain<>();
+
+
+            var prompt = chain.process(() -> user == null ? Prompt.accept_user_not_exist : null);
+
+            if (prompt != null)
+                return prompt;
+
+            userDao.update(null, new UpdateWrapper<User>().set("state", State.normal).eq("user_id", userId));
+            return Prompt.success;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Prompt.unknownError;
+        }
+    }
+
+
+    public Prompt deleteUser(int userId) {
+
+        try {
+            User user = userDao.selectById(userId);
+
+            LambdaLogicChain<Prompt> chain = new LambdaLogicChain<>();
+
+
+            var prompt = chain.process(
+                    () -> user == null ? Prompt.accept_user_not_exist : null,
+                    () -> user.state != State.unverified ? Prompt.unable_to_delete_verified_user : null
+            );
+
+            if (prompt != null)
+                return prompt;
+
+            userDao.deleteById(userId);
+            return Prompt.success;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Prompt.unknownError;
+        }
+
+    }
 }

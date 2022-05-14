@@ -1,14 +1,8 @@
 package com.springtest.demo.service;
 
-import com.springtest.demo.enums.Prompt;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PayServiceTest {
@@ -26,5 +20,12 @@ class PayServiceTest {
 
     @Test
     void _pay() {
+    }
+
+    @Test
+    void test() {
+
+//        var s = payService.getAllPays(10, 1).get(0);
+//        System.out.println(s.amount);
     }
 }
