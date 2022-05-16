@@ -28,4 +28,13 @@ class PayServiceTest {
 //        var s = payService.getAllPays(10, 1).get(0);
 //        System.out.println(s.amount);
     }
+
+
+    @Test
+    void refundTest() {
+
+        System.out.println(payService.refundPay(36));
+
+
+    }
 }

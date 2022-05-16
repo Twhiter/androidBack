@@ -4,7 +4,8 @@ spring:
     password: TWhiter
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:1234/mobile_pay
-
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -19,5 +20,7 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   typeEnumsPackage: com.springtest.demo.enums
+
+
 
 

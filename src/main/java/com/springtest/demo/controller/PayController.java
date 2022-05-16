@@ -4,12 +4,11 @@ package com.springtest.demo.controller;
 import com.springtest.demo.businessEntity.PaySemaphore;
 import com.springtest.demo.businessEntity.PaySemaphorePool;
 import com.springtest.demo.dto.*;
+import com.springtest.demo.entity.Merchant;
 import com.springtest.demo.entity.Pay;
 import com.springtest.demo.enums.Prompt;
 import com.springtest.demo.redisEntity.SessionPay;
-import com.springtest.demo.service.PayService;
-import com.springtest.demo.service.PayVerifyService;
-import com.springtest.demo.service.SessionPayService;
+import com.springtest.demo.service.*;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,12 @@ public class PayController {
     @Autowired
     private PayVerifyService payVerifyService;
 
+    @Autowired
+    private MerchantService merchantService;
+
+    @Autowired
+    private RefundService refundService;
+
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", paramType = "header"),
@@ -41,7 +46,7 @@ public class PayController {
     public ResponseData<PayResp> pay(@ApiIgnore @RequestAttribute("userId") int userId,
                                      @RequestParam(name = "merchantId") int merchantId,
                                      @RequestParam(name = "amount") BigDecimal amount,
-                                     @RequestParam(name = "paymentPassword")String paymentPassword,
+                                     @RequestParam(name = "paymentPassword") String paymentPassword,
                                      @RequestParam(name = "remarks")String remarks
                                      ) {
 
@@ -150,39 +155,40 @@ public class PayController {
 
 
     @PostMapping("/api/payVerify")
-    public ResponseData<Prompt> verifyPay(@RequestBody String RSAEncryptedBase64String) {
+    public ResponseData<VerifyPayResp> verifyPay(@RequestBody String RSAEncryptedBase64String) {
 
 
-        ResponseData<Prompt> resp = new ResponseData<>();
-        resp.data = Prompt.unknownError;
+        ResponseData<VerifyPayResp> resp = new ResponseData<>();
+        resp.data = new VerifyPayResp();
+        resp.data.prompt = Prompt.unknownError;
 
         try {
 
             //extract information
             MerchantVerifyInfo verifyInfo = payVerifyService.extractInfo(RSAEncryptedBase64String);
             if (verifyInfo == null) {
-                resp.data = Prompt.pay_verify_request_format_error;
+                resp.data.prompt = Prompt.pay_verify_request_format_error;
                 return resp;
             }
 
             //fetch sessionPay and check whether it exists or not
             SessionPay sessionPay = sessionPayService.getById(verifyInfo.sessionId);
             if (sessionPay == null) {
-                resp.data = Prompt.pay_time_out;
+                resp.data.prompt = Prompt.pay_time_out;
                 return resp;
             }
 
             // get the paySemaphore and check whether it exists or not
             PaySemaphore paySemaphore = PaySemaphorePool.getInstance().get(sessionPay.sessionId);
             if (paySemaphore == null || paySemaphore.notScanned.availablePermits() == 1) {
-                resp.data = Prompt.pay_time_out;
+                resp.data.prompt = Prompt.pay_time_out;
                 return resp;
             }
 
             //verify the signature
             Prompt prompt = payVerifyService.verify(verifyInfo, sessionPay);
             if (prompt != Prompt.success) {
-                resp.data = prompt;
+                resp.data.prompt = prompt;
                 return resp;
             }
 
@@ -191,6 +197,11 @@ public class PayController {
             Object[] promptAndPay = payService.payWithConfirm(sessionPay);
             prompt = (Prompt) promptAndPay[0];
             Pay pay = (Pay) promptAndPay[1];
+
+            if (prompt != Prompt.success) {
+                resp.data.prompt = prompt;
+                return resp;
+            }
 
             PayResp payResp = new PayResp();
             payResp.prompt = prompt;
@@ -205,11 +216,12 @@ public class PayController {
             //release the semaphore in order to inform phoneScan
             paySemaphore.isFinished.release();
 
-            resp.data = prompt;
+            resp.data.prompt = prompt;
+            resp.data.payId = pay.payId;
             return resp;
         } catch (Exception e) {
             e.printStackTrace();
-            resp.data = Prompt.unknownError;
+            resp.data.prompt = Prompt.unknownError;
             return resp;
         }
     }
@@ -259,7 +271,7 @@ public class PayController {
     }
 
 
-    @GetMapping("/api/payment/{pageNum}")
+    @GetMapping("/api/payments/{pageNum}")
     public ResponseData<Page<PaymentWithRefund>> getAllPayments(@PathVariable int pageNum,
                                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10")
                                                                         int pageSize
@@ -278,6 +290,57 @@ public class PayController {
             resp.errorPrompt = ResponseData.unknownError;
             resp.status = ResponseData.ERROR;
             return resp;
+        }
+    }
+
+
+    @PutMapping("/api/payment/state")
+    public ResponseData<Prompt> refundPay(@RequestAttribute("userId") int userId, @RequestBody int paymentId) {
+
+        ResponseData<Prompt> responseData = new ResponseData<>();
+
+        try {
+            Merchant merchant = merchantService.getMerchantByUserId(userId);
+            responseData.data = payService.refundPayWithMerchantId(merchant.merchantId, paymentId);
+            return responseData;
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseData.data = Prompt.unknownError;
+            return responseData;
+        }
+    }
+
+
+    @PostMapping("/api/refund")
+    public ResponseData<Prompt> refundPayUsingRSA(@RequestBody String RSAEncryptedBase64String) {
+
+        ResponseData<Prompt> responseData = new ResponseData<>();
+
+        try {
+
+
+            RefundRequest refundRequest = refundService.extractInfo(RSAEncryptedBase64String);
+
+            if (refundRequest == null) {
+                responseData.data = Prompt.refund_wrong_request_format;
+                return responseData;
+            }
+
+            Prompt prompt = refundService.validateSignature(refundRequest);
+
+            if (prompt != Prompt.success) {
+                responseData.data = prompt;
+                return responseData;
+            }
+
+            Merchant merchant = merchantService.getMerchantById(refundRequest.merchantId);
+
+
+            return refundPay(merchant.merchantUserId, refundRequest.payId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseData.data = Prompt.unknownError;
+            return responseData;
         }
     }
 

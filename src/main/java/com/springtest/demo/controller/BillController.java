@@ -84,7 +84,7 @@ public class BillController {
                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                                    Date start,
                                                            @RequestParam(value = "end", required = false,
-                                                                   defaultValue = "#{new java.util.Date}")
+                                                                   defaultValue = "#{new java.util.Date()}")
                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                                    Date end,
                                                            @RequestParam("billTypes") List<BillType> requestedBillTypes) {

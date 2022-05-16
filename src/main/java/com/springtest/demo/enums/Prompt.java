@@ -99,7 +99,15 @@ public enum Prompt {
     unable_to_delete_verified_user("Unable to delete verified user"),
 
     accept_merchant_not_exist("Merchant account doesn't exist"),
-    unable_to_delete_verified_merchant("Unable to delete verified merchant");
+    unable_to_delete_verified_merchant("Unable to delete verified merchant"),
+
+
+    refund_pay_id_not_exist("payment doesn't exist"),
+    refund_pay_id_already_refunded("payment is already refunded"),
+    refund_pay_merchant_not_exist("merchant not exist"),
+    refuned_pay_merchant_not_enough_right_refund("You are not allowed to refund the payment"),
+    refund_wrong_request_format("Wrong request format"),
+    refund_wrong_rsa_keys("Wrong RSA keys");
 
 
     @JsonValue

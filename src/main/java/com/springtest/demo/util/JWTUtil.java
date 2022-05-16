@@ -5,15 +5,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 public class JWTUtil {
 
@@ -45,68 +38,5 @@ public class JWTUtil {
     }
 
 
-    // The code is not necessary
 
-//    public static String signPaymentToken(int userId) {
-//
-//        UserPaymentTokenContent userPaymentTokenContent = new UserPaymentTokenContent();
-//        userPaymentTokenContent.userId = userId;
-//
-//        try {
-//            String jsonVal = new ObjectMapper().writeValueAsString(userPaymentTokenContent);
-//            Calendar calendar = Calendar.getInstance();
-//            calendar.add(Calendar.MINUTE,2);
-//            Date expireAt = calendar.getTime();
-//
-//            return sign(jsonVal,expireAt);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//
-//    }
-//
-//
-//    public static boolean verifyPaymentToken(int userId,String token) {
-//
-//        var decodedJWT = verify(token);
-//
-//        if (decodedJWT == null)
-//            return false;
-//
-//
-//
-//        String  jsonStr = decodedJWT.getClaim("data").asString();
-//        try {
-//            var tokenContent = new ObjectMapper().readValue(jsonStr,UserPaymentTokenContent.class);
-//
-//            return tokenContent.userId == userId && tokenContent.operation == Operation.Payment;
-//
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-//
-//
-//
-//}
-//
-//@Data
-//class UserPaymentTokenContent {
-//
-//    @JsonProperty("userId") public int userId;
-//    @JsonProperty("operation") public Operation operation = Operation.Payment;
-//}
-//
-//enum Operation {
-//
-//    Payment("payment");
-//
-//    @JsonValue
-//    public String value;
-//
-//     Operation(String s) {
-//        value = s;
-//    }
-}//
+}
