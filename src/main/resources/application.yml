@@ -3,7 +3,7 @@ spring:
     username: twhiter
     password: TWhiter
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://34.118.73.208:3306/mobile_pay
+    url: jdbc:mysql://34.118.38.24:3306/mobile_pay
   jackson:
     date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
   mvc:
