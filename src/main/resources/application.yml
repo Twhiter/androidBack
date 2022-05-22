@@ -3,7 +3,7 @@ spring:
     username: twhiter
     password: TWhiter
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:1234/mobile_pay
+    url: jdbc:mysql://34.118.73.208:3306/mobile_pay
   jackson:
     date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
   mvc:
@@ -11,7 +11,7 @@ spring:
       matching-strategy: ant_path_matcher
 
   redis:
-    host: 34.118.35.246
+    host: localhost
     password: TWhiter
 
 server:
