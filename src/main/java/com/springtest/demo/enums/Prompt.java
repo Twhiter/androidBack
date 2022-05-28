@@ -107,7 +107,31 @@ public enum Prompt {
     refund_pay_merchant_not_exist("merchant not exist"),
     refuned_pay_merchant_not_enough_right_refund("You are not allowed to refund the payment"),
     refund_wrong_request_format("Wrong request format"),
-    refund_wrong_rsa_keys("Wrong RSA keys");
+    refund_wrong_rsa_keys("Wrong RSA keys"),
+
+
+    //export to bank
+    export_target_not_exist("user/merchant not exist"),
+    export_target_frozen("user/merchant is frozen"),
+    export_target_unverified("user/merchant is not verified"),
+    export_wrong_password("wrong payment password"),
+    export_not_enough_balance("No enough balance"),
+
+    //import from bank
+    import_target_not_exist("user/merchant not exist"),
+    import_target_frozen("user/merchant is frozen"),
+    import_target_unverified("user/merchant is not verified"),
+    import_not_enough_balance("No enough balance"),
+
+
+    //import/export between user and merchant
+    ei_user_not_exist("user doesn't exist"),
+    ei_merchant_not_exist("merchant doesn't exist"),
+    ei_user_frozen_state("user account is frozen"),
+    ei_merchant_frozen_state("merchant account is frozen"),
+    ei_user_unverified("user account is not verified"),
+    ei_merchant_unverified("merchant account is not verified"),
+    ei_not_enough_balance("Not enough balance");
 
 
     @JsonValue

@@ -25,7 +25,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/bills/merchant", "/api/bills/user")
                 .addPathPatterns("/api/merchant")
                 .addPathPatterns("/api/payWithConfirm")
-                .addPathPatterns("/api/payment/state");
+                .addPathPatterns("/api/payment/state")
+                .addPathPatterns("/api/export/bank", "/api/import/bank")
+                .addPathPatterns("/api/export", "/api/import");
 
 
         //registry.addInterceptor(getAdminIdFromInterceptor);

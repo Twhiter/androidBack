@@ -1,7 +1,7 @@
 spring:
   datasource:
-    username: twhiter
-    password: TWhiter
+    username: root
+    password: 1357924680
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://34.118.38.24:3306/mobile_pay
   jackson:
