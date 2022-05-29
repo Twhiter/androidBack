@@ -57,6 +57,7 @@ public class UserController {
             try {
                 f = fileService.storePassportImage(passportPhoto);
             } catch (IOException e) {
+                e.printStackTrace();
                 resp.status = ResponseData.ERROR;
                 resp.errorPrompt = "Error! Please Try Again!";
                 return resp;

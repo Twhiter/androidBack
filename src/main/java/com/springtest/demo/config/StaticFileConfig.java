@@ -16,14 +16,15 @@ public class StaticFileConfig implements WebMvcConfigurer {
     public static final Path passportImageDirectory;
     public static final Path avatarImageDirectory;
     public static final Path licenseImageDirectory;
+    public static final String root = new File("/home/tangyijcb").getAbsolutePath();
 
-    //set the directory storing passport images to '{project_directory/static/passport_image}'
+    //set the directory storing passport images to '{~/static/passport_image}'
     static {
-        passportImageDirectory = Paths.get(new File("").getAbsolutePath()
+        passportImageDirectory = Paths.get(root
                 , "static", "passport_image");
-        avatarImageDirectory = Paths.get(new File("").getAbsolutePath()
+        avatarImageDirectory = Paths.get(root
                 , "static", "avatar");
-        licenseImageDirectory = Paths.get(new File("").getAbsolutePath()
+        licenseImageDirectory = Paths.get(root
                 , "static", "license_image");
     }
 
