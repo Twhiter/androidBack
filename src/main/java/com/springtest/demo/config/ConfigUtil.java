@@ -17,7 +17,7 @@ public class ConfigUtil {
 
     //account for qq email
     public static final String USERNAME = "2449291739@qq.com";
-    public static final String PASSWORD = "bjuvzmtmzcvkdhid";
+    public static final String PASSWORD = "123456789";
     public static final String SMTP_HOST = "smtp.qq.com";
     public static final Integer SMTP_PORT = 587;
 
